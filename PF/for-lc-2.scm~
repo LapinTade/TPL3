@@ -1,0 +1,34 @@
+#!r6rs
+
+(import (rnrs))
+
+(define (writeln/return x)
+  ;;  Fonction tr�s utile pour pouvoir afficher un r�sultat suivi d'un passage
+  ;;  � la ligne, tout en pouvant r�cup�rer ce r�sultat dans une variable. Les
+  ;;  trois expressions suivantes sont �valu�es en s�quence et la valeur de la
+  ;;  derni�re est retourn�e.
+  (write x)
+  (newline)
+  x)
+
+(define (fact n)
+  (if (zero? n) 1 (* n (fact (- n 1)))))
+
+;(define (alternate-series u epsilon)
+;  (touch-next-step (u 0) u 1 epsilon))
+;
+;(define (exponential-minus-v2 x)
+;  ;;  "-v2" est mis pour "version no. 2".
+;  (let ((minus-x (- x)))
+;    (alternate-series (lambda (n) (inexact (/ (expt minus-x n) (fact n)))) 0.001)))
+
+(define (mystery n p)
+  ;;
+  (define (rec-mystery n0 p0)
+    ;;  Des formes sp�ciales "define" internes � une d�finition �quivalent �
+    ;;  l'introduction de variables locales au moyen de la forme sp�ciale
+    ;;  "letrec*" :
+    (if (zero? (mod n0 p0)) (rec-mystery (div n0 p0) p0) n0))
+  ;;
+  ;;  Principal call:
+  (if (or (zero? p) (zero? n)) n (rec-mystery n p)))

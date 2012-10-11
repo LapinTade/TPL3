@@ -1,0 +1,34 @@
+#!r6rs
+
+(import (rnrs))  ;  Importation en vrac de tous les modules de la bibliothèque
+					;  initiale : nous verrons plus tard
+					;  comment procéder plus précisément.
+					;  Comme vous l'avez deviné, ceci est
+					;  un commentaire.
+
+(write (+ 2012 (* (+ 22 1) (/ 14 (- 9 2)))))  ;  (*)
+(newline) 
+(write "Hello world!") 
+(newline) 
+(display "Hello world!") 
+(newline) 
+(write ((lambda (x) (* x x)) 2010))  ;  (**)
+(newline)
+
+(define crash  ;  (***)  Pour bien montrer que Scheme n'évalue
+  (lambda () (/ 0)))  ;  pas sous la forme spéciale lambda.
+
+(define derive-wrt
+  (lambda (f1 h)
+    (lambda (x) (/ (- (f1 (+ x h)) (f1 x)) h))))
+
+(write ((derive-wrt (lambda (x) (* x x)) 0.0001) 2)) 
+(newline) 
+(write ((derive-wrt + 0.0001) 2))  ;  (****)
+
+(define fact
+  (lambda (n) (if (zero? n) 1 (* n (fact (- n 1))))))
+
+(newline) 
+(write (fact 6)) 
+(newline)
