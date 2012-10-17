@@ -155,11 +155,19 @@
 (define (diagonal? v)
   (if (equal? 0 v)
       0
-      (if (= (car v) (cdr v))
-          #t
-          #f)))
+      (= (car v) (cdr v))))
 (define (scal-prod v w)
   (+ (* (car v) (car w) (* (car v) (car w)))))
 
 (define (pair-op f2 v w)
-  (cons ((f2 (car v) (car w)) (f2 (cdr v) (cdr w)))))
+  (cons (f2 (car v) (car w)) (f2 (cdr v) (cdr w))))
+
+(pair-op + '(20 . 10) '(30 . 40))
+
+(define (diagonal i)
+  (if (zero? i) '(0 . 0)
+      (let* ((rec (diagonal (- i 1)))
+             (p (car rec))
+             (q (cdr rec)))
+        (if (zero? q) (cons 0 (+ p 1)) (cons (+ p 1) (- q 1))))))
+        
