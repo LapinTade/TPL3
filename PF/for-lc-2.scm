@@ -24,14 +24,16 @@
 
 (define (mystery n p)
   ;;
-  (define (rec-mystery n0 p0)
+  (define (rec-mystery n0)
     ;;  Des formes spéciales "define" internes à une définition équivalent à
     ;;  l'introduction de variables locales au moyen de la forme spéciale
     ;;  "letrec*" :
-    (if (zero? (mod n0 p0)) (rec-mystery (div n0 p0) p0) n0))
+    (call-with-values (lambda () (div-and-mod n0 p))
+                      (lambda (quo-0 rem-0)
+                        (if (zero? rem-0) (rec-mystery quo-0) 0))))
   ;;
   ;;  Principal call:
-  (if (or (zero? p) (zero? n)) n (rec-mystery n p)))
+  (if (or (zero? p) (zero? n)) n (rec-mystery n)))
 
 
 ;; TP2
@@ -79,3 +81,9 @@
 (define (exponential-minus-v2 x)
   (let (( minus-x (- x)))
     (alternate-series (lambda (n) (inexact minus-x n) (fact n)))))
+
+(define (hamming-number? n)
+  (let* ((prune-2 (mystery n 2))
+         (prune-3 (mystery prune-2 3))
+         (prune-5 (mystery prune-3 5)))
+    (if (= prune-5 1) #t #f)))
