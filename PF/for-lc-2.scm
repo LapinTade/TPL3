@@ -25,8 +25,8 @@
 (define (mystery n p)
   ;;
   (define (rec-mystery n0 p0)
-    ;;  Des formes sp�ciales "define" internes � une d�finition �quivalent �
-    ;;  l'introduction de variables locales au moyen de la forme sp�ciale
+    ;;  Des formes spéciales "define" internes à une définition équivalent à
+    ;;  l'introduction de variables locales au moyen de la forme spéciale
     ;;  "letrec*" :
     (if (zero? (mod n0 p0)) (rec-mystery (div n0 p0) p0) n0))
   ;;
@@ -66,4 +66,16 @@
 (writeln/return (to-euro 12 3 1 6))
 
 (define to-sec (to-metric 24 60 60 1))
-(writeln/return (to-sec 1 3 47 48)) 
+(writeln/return (to-sec 1 3 47 48))
+
+(define (alternate-series u epsilon)
+  (define (touch-next-step approximate-result n)
+    (let ((next-term (u n)))
+      (if (< (abs next-term) epsilon)
+          (writeln/return approximate-result)
+          (touch-next-step (+ next-term approximate-result) (+ n 1)))))
+  (touch-next-step (u 0) 1))
+
+(define (exponential-minus-v2 x)
+  (let (( minus-x (- x)))
+    (alternate-series (lambda (n) (inexact minus-x n) (fact n)))))
