@@ -6,7 +6,6 @@ char decrypt(char key, char letter) {
 
 	int fl = 'A';
 
-	//initialisation du tableau
 	return (key - letter )% 26 + fl;
 }
 

@@ -29,14 +29,14 @@ int main(int argc, char  *argv[]) {
             do {
                 currentChar = fgetc(fileR);
 
-                if (currentChar <= ll && currentChar >= fl) {
-                    fputc(crypt(argv[1][iterattor], currentChar), fileW);
-
-                    if (argv[1][iterattor] = '\0') {
+                if (argv[1][iterattor] = '\0') {
                     	iterattor = 0;
                     } else {
                     	iterattor++;
                     }
+
+                if (currentChar <= ll && currentChar >= fl) {
+                    fputc(crypt(argv[1][iterattor], currentChar), fileW);
                 } else {
                     if (currentChar != EOF)
                     fputc(currentChar, fileW);
@@ -47,7 +47,7 @@ int main(int argc, char  *argv[]) {
             return 2;
         }
 	} else {
-		printf("USAGE: %s cle_decalage fichier_a_chiffrer fichier_sortie\n", argv[0]);
+		printf("USAGE: %s CLE_DECALAGE fichier_a_chiffrer fichier_sortie\n", argv[0]);
 		return 1;
 	}
 
