@@ -6,7 +6,10 @@ char decrypt(char key, char letter) {
 
 	int fl = 'A';
 
-	return (key - letter )% 26 + fl;
+	if ((letter - key) < 0)
+		return (letter - key + 26)% 26 + fl;
+	else
+		return (letter - key)% 26 + fl;
 }
 
 int main(int argc, char  *argv[]) {
@@ -31,15 +34,17 @@ int main(int argc, char  *argv[]) {
                 if (currentChar <= ll && currentChar >= fl) {
                     fputc(decrypt(argv[1][iterattor], currentChar), fileW);
 
-                    if (argv[1][iterattor] = '\0') {
-                    	iterattor = 0;
-                    } else {
-                    	iterattor++;
-                    }
+				iterattor++;
+				if (argv[1][iterattor] == '\0') {
+					iterattor = 0;
+				}
+
                 } else {
                     if (currentChar != EOF)
-                    fputc(currentChar, fileW);
+                    	fputc(currentChar, fileW);
                 }
+
+
             } while (currentChar != EOF);
         } else {
             printf("Impossible d'ouvrir le fichier %s\n", fileR);

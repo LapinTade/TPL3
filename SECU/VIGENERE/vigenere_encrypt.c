@@ -2,11 +2,9 @@
 #include <stdlib.h>
 
 char crypt(char key, char letter) {
-	int i,u;
 
 	int fl = 'A';
 
-	//initialisation du tableau
 	return (key + letter )% 26 + fl;
 }
 
@@ -29,18 +27,20 @@ int main(int argc, char  *argv[]) {
             do {
                 currentChar = fgetc(fileR);
 
-                if (argv[1][iterattor] = '\0') {
-                    	iterattor = 0;
-                    } else {
-                    	iterattor++;
-                    }
-
                 if (currentChar <= ll && currentChar >= fl) {
                     fputc(crypt(argv[1][iterattor], currentChar), fileW);
+
+				iterattor++;
+				if (argv[1][iterattor] == '\0') {
+					iterattor = 0;
+				}
+
                 } else {
                     if (currentChar != EOF)
-                    fputc(currentChar, fileW);
+                    	fputc(currentChar, fileW);
                 }
+
+
             } while (currentChar != EOF);
         } else {
             printf("Impossible d'ouvrir le fichier %s\n", fileR);
