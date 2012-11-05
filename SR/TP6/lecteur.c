@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -9,7 +11,10 @@ int main() {
 	int shmid;
 
 	char *pint;
-	shmid = shmget(75,1,0777);
+	shmid = shmget(205,4,0777);
 	pint = (char*) shmat(shmid,0,0);
-	printf("%c\n", *pint)
+	printf("%c\n", *pint++);
+	printf("%c\n", *pint++);
+	printf("%c\n", *pint++);
+	printf("%c\n", *pint++);
 }

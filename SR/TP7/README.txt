@@ -1,0 +1,1 @@
+gcc <nom.c> -o <nom> -lpthread
