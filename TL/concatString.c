@@ -14,6 +14,7 @@ int stringSize(char* str) {
 		size++;
 		str++;
 	}
+	
 	return size;
 }
 
@@ -35,6 +36,7 @@ char* stringConcat(char* str1, char* str2) {
 			o++;
 		}
 	}
+
 	return tmp;
 }
 
