@@ -1,0 +1,2 @@
+USE transaction_test;
+UPDATE test SET val=2 WHERE id=1;

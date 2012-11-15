@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 	shift = highestInd - (ref -fl);
 	if (shift < 0) shift + 26;
 
-	//printf("highestInd: %d === shift: %d\n", highestInd, shift);
+	printf("highestInd: %c === shift: %d\n", highestInd, shift);
 
 	fclose(fileR);
 	//Ouverture fichier en ecriture

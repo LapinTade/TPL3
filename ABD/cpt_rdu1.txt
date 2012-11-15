@@ -1,0 +1,143 @@
+ROZE Nicolas
+TP1A
+14/11/12
+
+
+1.1 et 1.2
+	Dans la première partie on apprends à configurer le serveur mysql et se 
+	se connecter au serveur grace a des commandes en lignes.
+1
+	1.3
+		1.3.1 
+			Dans cette partie on nous apprends a utiliser mysql-workbench.
+				> La zone de saisie se trouve au milieu de l'écran
+				> Le journal est la partie du bas de l'écran
+				> La liste des schémas se situe a gauche de la zone de saisie
+				> Désactiver auto-commit: Query>Auto-commit transactions
+		1.3.1
+			Creation d'un modèle EER en ajoutant un diagramme
+				Icone de création de nouvelle table (T) permet d'ajouter une nouvelle table
+				Création d'une relation pour avoir une clé étrangère (1)
+
+				Code MYSQL généré par Database>Forward Egineer:
+					"""
+					SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+					SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+					SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+					CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+					USE `mydb` ;
+
+					-- -----------------------------------------------------
+					-- Table `mydb`.`table1`
+					-- -----------------------------------------------------
+					DROP TABLE IF EXISTS `mydb`.`table1` ;
+
+					CREATE  TABLE IF NOT EXISTS `mydb`.`table1` (
+					  `idtable1` INT NOT NULL ,
+					  PRIMARY KEY (`idtable1`) )
+					ENGINE = InnoDB;
+
+
+					-- -----------------------------------------------------
+					-- Table `mydb`.`table2`
+					-- -----------------------------------------------------
+					DROP TABLE IF EXISTS `mydb`.`table2` ;
+
+					CREATE  TABLE IF NOT EXISTS `mydb`.`table2` (
+					  `idtable2` INT NOT NULL ,
+					  `table1_idtable1` INT NOT NULL ,
+					  PRIMARY KEY (`idtable2`) ,
+					  INDEX `fk_table2_table1_idx` (`table1_idtable1` ASC) ,
+					  CONSTRAINT `fk_table2_table1`
+					    FOREIGN KEY (`table1_idtable1` )
+					    REFERENCES `mydb`.`table1` (`idtable1` )
+					    ON DELETE NO ACTION
+					    ON UPDATE NO ACTION)
+					ENGINE = InnoDB;
+
+
+
+					SET SQL_MODE=@OLD_SQL_MODE;
+					SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+					SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+					"""
+		1.3.3
+			???
+2
+	Création de deux tables suivant le MR donnée dans le TP. Code SQL Obtenu et executé
+	à l'aide de Forward Engineer:
+		SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+		SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+		SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+		CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+		USE `mydb` ;
+
+		-- -----------------------------------------------------
+		-- Table `mydb`.`Emprunt`
+		-- -----------------------------------------------------
+		DROP TABLE IF EXISTS `mydb`.`Emprunt` ;
+
+		CREATE  TABLE IF NOT EXISTS `mydb`.`Emprunt` (
+		  `Personne` VARCHAR(45) NOT NULL ,
+		  `Livre` VARCHAR(45) NOT NULL ,
+		  `DateEmprunt` DATE NOT NULL ,
+		  `DateRetourPrevue` DATE NULL ,
+		  `DateRetourEffective` DATE NULL ,
+		  PRIMARY KEY (`Personne`, `Livre`, `DateEmprunt`) )
+		ENGINE = InnoDB;
+
+
+		-- -----------------------------------------------------
+		-- Table `mydb`.`Retard`
+		-- -----------------------------------------------------
+		DROP TABLE IF EXISTS `mydb`.`Retard` ;
+
+		CREATE  TABLE IF NOT EXISTS `mydb`.`Retard` (
+		  `Personne` VARCHAR(45) NOT NULL ,
+		  `Livre` VARCHAR(45) NOT NULL ,
+		  `DateEmprunt` DATE NOT NULL ,
+		  `PénalitéRetard` INT NULL ,
+		  PRIMARY KEY (`Personne`, `Livre`, `DateEmprunt`) )
+		ENGINE = InnoDB;
+
+
+
+		SET SQL_MODE=@OLD_SQL_MODE;
+		SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+		SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+	SQL de data insert:
+		INSERT INTO Emprunt VALUES ("Jean", "Bleach 127", "2012-10-17","2012-10-18","2012-10-19");
+		INSERT INTO Emprunt VALUES ("Pierre", "Eragon", "2012-10-14","2012-10-16","2012-10-20");
+		INSERT INTO Emprunt VALUES ("Paul", "L'ile de Ji", "2012-10-11","2012-10-20","2012-10-17");
+		INSERT INTO Emprunt VALUES ("Jacques", "Pug", "2012-10-13","2012-10-20","2012-10-16");
+
+		INSERT INTO Retard VALUES ("Jean", "Bleach 127", "2012-10-17",150);
+		INSERT INTO Retard VALUES ("Pierre", "Eragon", "2012-10-14", "2012-10-12",100);
+
+		SELECT * FROM Emprunt;
+		SELECT * FROM Retard;
+		SELECT e.Personne FROM Emprunt e, Retard r WHERE e.Personne=r.Personne AND r.PeneliteRetard=100;
+3
+	3.2
+		Nous testons ici plusieurs niveau de transactions. On effectue 2 select dont l'un
+		est retardé de 10 secondes. Et depuis une autre connexion: une modification d'un
+		champs de la table utilisé
+
+		Autocommit NON actif. 
+		On execute la première requete sur la première connexion et
+		juste après on execute la deuxieme requete. On obtient alors une erreur sur la
+		première requete. Un changement dans la table a été effectué alors que la 
+		transaction était encore en cours.
+
+		Avec READ COMMITTED, les requetes s'executent, mais le dernier SELECT retourne 
+		les anciennes valeurs de la table. Il n'a pas pris en compte les changement entre
+		temps, car les commits n'ont pas été effectué (automatiquement).
+
+	3.3
+		Autocommit actif.
+			Avec READ COMMITED, le dernier SELECT de la premiere requete ne peux pas
+			s'effectuer car un commit a été envoyé en cours de transation.
+

@@ -1,0 +1,11 @@
+CREATE SCHEMA transaction_test;
+USE transaction_test;
+
+DROP TABLE IF EXISTS test;
+CREATE TABLE test(
+	id INT NOT NULL,
+	val INT NULL,
+	PRIMARY  KEY (id)
+) engine=InnoDB;
+
+INSERT INTO test (id, val) VALUES (1, 1);

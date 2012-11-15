@@ -1,0 +1,3 @@
+SELECT * FROM Emprunt;
+
+#DELETE FROM Emprunt WHERE DateRetourEffective="0000-00-00";
