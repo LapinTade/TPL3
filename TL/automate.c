@@ -2,33 +2,55 @@
 #include <stdio.h>
 
 typedef struct s_liste {
-        int state;
-        struct s_liste* nxt;
+        int state;	// Nom de l'etat
+        struct s_liste* nxt;	// Etat suivant
 } liste;
 
 typedef struct {
          int size;
-         int sizealpha;
+         int sizeAlpha;
          int* initial;
          int* final;
          liste*** trans;
 } automate;
 
-void addList(int* tab, int stateToAdd) {
-	liste current, new;
+void addToList(liste* tab, int dataToAdd) {
+	// Permet l'ajout d'une donnée a la fin d'une liste chainee
 
-	current = au.trans[state][lettre].nxt;
+	liste* current, new;
 
+	current = tab.nxt;
+
+	// On cherche le dernier maillon de la chaine
 	while (current != NULL) {
 		current = current.nxt;
 	}
 
-	new.state = stateToAdd;
+	// On cree un nouvel etat que l'on ajoute a la suite de la liste
+	new.state = dataToAdd;
 	current.nxt = new;
 }
 
 void ajouteTransition(automate au, int state, int letter) {
-	addList(au.trans[state][lettre],letter);
+	addToList(au.trans[state][letter],letter);
+}
+
+void ConstruitAutomateExemple(int size, int sizeAlpha) {
+	automate au;
+	int i,k;
+
+	au.size = size;
+	au.sizeAlpha = sizeAlpha;
+
+	for (i=0; i<size; i++) {
+		// Ajoute les etats
+		addToList(au.trans, i);
+
+		for (k=0; k<sizeAlpha; k++) {
+			// Ajoute les Nom de transitions
+			addToList(au.trans[i], k);
+		}
+	}
 }
 
 

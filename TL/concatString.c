@@ -77,14 +77,14 @@ int main() {
 	char* str3 = malloc(12*sizeof(char));
 	char* str4 = malloc(12*sizeof(char));
 
-	scanf(">%s",str1);
-	scanf(">%s",str2);
+	scanf("%s",str1);
+	scanf("%s",str2);
 
 	printf("\nAvec String H\n");
 	printf("%s\n\n", concatAvecStringH(str1,str2));
 
-	scanf(">%s",str3);
-	scanf(">%s",str4);
+	scanf("%s",str3);
+	scanf("%s",str4);
 
 	printf("\nSans String H\n");
 	printf("%s\n\n", concatSansStringH(str3,str4));
