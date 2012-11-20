@@ -6,8 +6,13 @@ int FL = 'A';
 int LL = 'Z';
 int DL = 'a';
 
-char substi(char* key, char letter) {
-	return key[letter % FL];
+char unsubsti(char* key, char letter) {
+	int i;
+	for(i=0;i<26;i++){
+		if(letter == key[i]) {
+			return (i +FL);
+		}
+	}
 }
 
 char* makeKey(char key_clean[25], char* inputedKey) {
@@ -47,6 +52,7 @@ char* makeKey(char key_clean[25], char* inputedKey) {
 	}
 }
 
+
 int main(int argc, char  *argv[]) {
 
 	FILE* fileR = NULL;
@@ -64,12 +70,10 @@ int main(int argc, char  *argv[]) {
 
 		if (fileR != NULL) {
 			makeKey(key_clean, argv[1]);
-			printf("%s\n", key_clean);
-
             do {
             	currentChar = fgetc(fileR);
             	if(currentChar <= LL && currentChar >= FL) {
-            		fputc(substi(key_clean, currentChar), fileW);
+            		fputc(unsubsti(key_clean, currentChar), fileW);
             	} else {
             		fputc(currentChar, fileW);
             	}
@@ -79,7 +83,7 @@ int main(int argc, char  *argv[]) {
             return 2;
         }
 	} else {
-		printf("USAGE: %s CLE_CHIFFREMENT fichier_a_chiffrer fichier_sortie\n", argv[0]);
+		printf("USAGE: %s CLE_CHIFFREMENT fichier_a_dechiffrer fichier_sortie\n", argv[0]);
 		return 1;
 	}
 
