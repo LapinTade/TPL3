@@ -63,7 +63,7 @@ void ajouteTransition(automate* au, int src, int targ, char alpha){
 		printf("L'Etat ou la lettre n'existe pas. \n");
 		return;
 	}
-	ajouteListe(&(au->trans[src][(int)(alpha -'a')]), targ);	
+	ajouteListe(&(au->trans[src][(int)(alpha - 97)]), targ);	
 }
 
 void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
@@ -82,11 +82,12 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 		scanf ("%d",&k);
 		au->initial[i] = k;
 	}
-	/*au->initial[0]=1;
+	/*
+	au->initial[0]=1;
 	au->initial[1]=0;
 	au->initial[2]=1;
 	au->initial[3]=0;
-	au->initial[4]=0;*/
+	au->initial[4]=0;//*/
 
 	// Etats finaux
 	au->final = (int*) malloc(au->size*sizeof(int));
@@ -95,11 +96,12 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 		scanf ("%d",&k);
 		au->initial[i] = k;
 	}
-	/*au->final[0]=0;
+	/*
+	au->final[0]=0;
 	au->final[1]=0;
 	au->final[2]=1;
 	au->final[3]=0;
-	au->final[4]=1;*/
+	au->final[4]=1; //*/
 
 	// Creation/initialisations de transitions vides
 	au->trans = (liste***) malloc(au->size*sizeof(liste***));
@@ -115,11 +117,11 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 		printf("Combien de transitions voulez vous ajouter\n");
 		scanf ("%d",&k);
 		for(j=0; j<k; j++) {
-			printf("\nEtat cible ? (de 0 à %d: ", au->size-1);
+			printf("\nEtat cible ? (de 0 à %d): ", au->size-1);
 			scanf ("%d",&targ);
-			printf("\nPar transition ? (a, ..., %c /!\\ à la valeur !)", au->sizeAlpha+97);
-			scanf ("%c",&tran);
-
+			printf("\nPar transition ? (a, ..., %c /!\\ à la valeur !)", au->sizeAlpha+96);	// 97:a; -1 pour la taille
+			scanf ("%s",&tran);
+			printf("%c\n", tran);
 			ajouteTransition(au,i,targ,tran);
 		}
 	}
@@ -285,8 +287,21 @@ void supprimeTransition(automate* au, int src, int targ, char alpha) {
 	free(tmpTrans);
 }
 
+void supprimeEtat(automate* au, int state) {
+	int j,k;
+	int* tmp;
+	liste* tmp;
+
+
+	if(state >= au->size || state < 0) {
+		printf("L'etat n'existe pas !\n");
+		return;
+	}
+}
+
 int main() {
-	
+	automate* au = (automate*) malloc(sizeof(automate));
+	ConstruitAutomateExemple(au, 6, 2);
 
 	return 0;
 }
