@@ -16,110 +16,175 @@ typedef struct {
          liste*** trans;
 } automate;
 
-void addToList(liste* tab, int dataToAdd) {
-	// Permet l'ajout d'une donnée a la fin d'une liste chainee
 
-	liste* current;
-	liste* new;
-	new = (liste*) malloc(sizeof(liste));
-
-	current = (liste*) malloc(sizeof(liste));
-	current = tab.nxt;
-
-	// On cherche le dernier maillon de la chaine
-	while (current != NULL) {
-		current = current.nxt;
+void ajouteListe(liste** l,int q){
+	liste* ptl ;
+	liste* tmp ;
+	ptl=*l;
+	if(!ptl){
+		ptl=(liste*) malloc(sizeof(liste));
+		ptl->state=q;
+		ptl->nxt=NULL;
+		*l=ptl;
+		return;
 	}
-
-	// On cree un nouvel etat que l'on ajoute a la suite de la liste
-	new.state = dataToAdd;
-	current.nxt = new;
-
-	free(new);
-	free(current);
+	if(ptl->state == q){
+		return;
+	}
+	if(q< ptl->state){
+		tmp=*l;
+		*l=(liste*) malloc(sizeof(liste));
+		(*l)->state=q;
+		(*l)->nxt=tmp;
+		return;
+	}
+	while(ptl->nxt && ptl->nxt->state <q){
+		ptl=ptl->nxt;
+	}
+	if(!ptl->nxt){
+		ptl->nxt=(liste*) malloc(sizeof(liste));
+		ptl=ptl->nxt;
+		ptl->state=q;
+		ptl->nxt=NULL;
+		return;
+	}
+	if(ptl->nxt->state==q){
+		return;
+	}
+	tmp=ptl->nxt;
+	ptl->nxt=(liste*) malloc(sizeof(liste));
+	ptl=ptl->nxt;
+	ptl->state=q;
+	ptl->nxt=tmp;
 }
 
-void ajouteTransition(automate au, int state, int letter,int cible) {
-	// Exemple Dans automate au, on ajoute a l'état 2, lettre 1(a), une transition vers 3
-	// ajouteTransition(au,2,1,2);
-	addToList((liste*) au.trans[state][letter],cible);
+void ajouteTransition(automate* au, int src, int cbl, char alpha){
+	if (src >= au->size || src < 0 || cbl >= au->size || cbl < 0 || ((int)(alpha - 'a') >= au->sizeAlpha)){
+		printf("L'Etat ou la lettre n'existe pas. \n");
+		return;
+	}
+	ajouteListe(&(au->trans[src][(int)(alpha -'a')]), cbl);	
 }
 
-automate* ConstruitAutomateExemple(int size, int sizeAlpha, int* initial, int* final) {
-	automate* au;
-	int i,k;
+void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
+	int i,j,k;
+	int targ;
+	char tran;
 
-	au = (automate*) malloc(sizeof(automate));
+	// Tailles générales de l'automates
+	au->size = size;
+	au->sizeAlpha = sizeAlpha;
 
-	au.size = size;
-	au.sizeAlpha = sizeAlpha;
+	// Etats initiaux
+	au->initial = (int*) malloc(au->size*sizeof(int));
+	for(i=0; i<au->size; i++) {
+		printf("Etat:%d, Initial? Oui:1 | Non:0\n", i);
+		scanf ("%d",&k);
+		au->initial[i] = k;
+	}
+	/*au->initial[0]=1;
+	au->initial[1]=0;
+	au->initial[2]=1;
+	au->initial[3]=0;
+	au->initial[4]=0;*/
 
-	au.initial = (int*) malloc(sizeof(int));
-	au.initial = initial;
+	// Etats finaux
+	au->final = (int*) malloc(au->size*sizeof(int));
+	for(i=0; i<au->size; i++) {
+		printf("Etat:%d, Final? Oui:1 | Non:0\n", i);
+		scanf ("%d",&k);
+		au->initial[i] = k;
+	}
+	/*au->final[0]=0;
+	au->final[1]=0;
+	au->final[2]=1;
+	au->final[3]=0;
+	au->final[4]=1;*/
 
-	au.final = (int*) malloc(sizeof(int));
-	au.final = final;
-
-	au.trans = (liste***) malloc(sizeof(liste**));
-
-	for (i=1; i<size; i++) {
-		// Ajoute les etats
-		au.trans = (liste*) malloc(sizeof(liste));
-
-		for (k=0; k<sizeAlpha; k++) {
-			// Ajoute les Nom de transitions
-			au.trans[i] = (liste*) malloc(sizeof(liste));
+	// Creation/initialisations de transitions vides
+	au->trans = (liste***) malloc(au->size*sizeof(liste***));
+	for(i=0;i<au->size;i++){
+		au->trans[i]=(liste**) malloc(au->sizeAlpha*sizeof(liste*));
+		for(k=0;k<au->sizeAlpha;k++){
+			au->trans[i][k]=NULL;
 		}
 	}
 
-	return au;
+	for(i=0;i<au->size;i++) {
+		printf("Etat: %d | ", i);
+		printf("Combien de transitions voulez vous ajouter\n");
+		scanf ("%d",&k);
+		for(j=0; j<k; j++) {
+			printf("\nEtat cible ? (de 0 à %d: ", au->size-1);
+			scanf ("%d",&targ);
+			printf("\nPar transition ? (a,b... /!\\ à la valeur !)");
+			scanf ("%c",&tran);
+
+			ajouteTransition(au,i,targ,tran);
+		}
+	}
+
+
 }
 
 void afficheAutomate(automate au) {
-	int j,k;
-	int l=0;
+	int i,j;
+	unsigned char c;
 
-	printf("Etat initiaux\n");
-	while(au.initial[l] != NULL) {
-		printf("%d\n", au.initial[l]);
-		l++;
-	}
-
-	l=0;
-	printf("Etat finaux\n");
-	while(au.final[l] != NULL) {
-		printf("%d\n", au.final[l]);
-		l++;
-	}
-
-	printf("Transitions:\n-------------------\n");
-	for(l=0; l<au.size; l++) {
-		printf("Depuis: %d\n", j);
-		for(j=0; j<au.sizeAlpha; j++) {
-			printf("Avec: %d\n", j);
-			k=0;
-			while(au.trans[l][j][k].nxt!=NULL) {
-				printf("%d\n", au.trans[l][j][k]);
-				k++;
-			}
+// affichage des états initiaux
+	printf("\nLes etats initiaux\n");
+	
+	for (i=0; i<au.size; i++){
+		if (au.initial[i] == 1){
+			printf(" %d",i);
 		}
 	}
+
+// affichage des états finaux
+	printf("\nLes etats finaux\n");
+	for (i=0; i<au.size; i++){
+		if(au.final[i] == 1){
+			printf(" %d",i);
+		}
+	}
+
+// affichage des transitions
+	printf("\nLes Transitions\n");
+	
+	for (i=0; i<au.size; i++){
+	printf("------------------------------\n");
+		printf("\nDepuis l'etat %d",i);
+		for (j=0; j<au.sizeAlpha; j++){
+			printf("\navec la lettre %c :\n", c = (unsigned char) j+97);	
+			liste* tmp;
+			tmp = au.trans[i][j];
+
+			while (tmp != NULL){
+				printf(" %d",tmp->state);
+				tmp = tmp->nxt;
+			}
+			printf("\n");
+		}
+	}
+	printf("\n");
 }
 
-int compteTransition(automate au) {
-	int nbTransi=0;
-	int j,k,l;
+int compteTransitions(automate au){
+	int nb=0;
+	int i,j;
+	
+	// nb est le nombre de transitions
+	for (i=0; i<au.size; i++){
+		for (j=0; j<au.sizeAlpha; j++){
+			liste* tmp;
+			tmp = au.trans[i][j];
 
-	for(l=0; l<au.size; l++) {
-		for(j=0; j<au.sizeAlpha; j++) {
-			k=0;
-			while(au.trans[l][j][k].nxt!=NULL) {
-				nbTransi++;
-				k++;
+			while (tmp != NULL){
+				nb++;
+				tmp = tmp->nxt;
 			}
 		}
 	}
-	return nbTransi;
 }
 
 int main() {
