@@ -5,42 +5,39 @@
 #include <netdb.h>
 #include <netinet/in.h>
 
-/* ce programme s execute sur le serveur     */
-/*  -- programme tcps09.c -- Novembre 2009  */
-/*               protocole TCP             */
-/* -------------------------------------------------*/
-
 int main()
 {
 
- char mess_recu[BUFSIZ],mess_envoi[BUFSIZ];
- int  pp,d_sock,cc,l;
- int longe,service;
+ char mess_recu[128], mess_envoi[128];
+ int  pp,d_sock,cc;
+unsigned int from_size;
  char tab[128];
- 
-  struct sockaddr_in serveur = {AF_INET};
-  struct sockaddr_in client;
+    struct sockaddr_in serv={AF_INET};
+struct sockaddr_in from;
 
-  serveur.sin_port=2010; /* numero de port */
-  serveur.sin_family=AF_INET;
-  serveur.sin_addr.s_addr=INADDR_ANY;
-  d_sock=socket(AF_INET,SOCK_STREAM,0); /* procole TCP */
- 
-  pp=bind(d_sock,(struct sockaddr*)&serveur,sizeof(serveur));
-  printf("serveur pret\n");
- 
-  l=listen(d_sock,1);
-  longe=sizeof(struct sockaddr_in);
-  service=accept(d_sock,(struct sockaddr *)&client,&longe);
-  printf("accept= %d\n",service);
+serv.sin_port=2000; /* numero de port */
+   
+d_sock=socket(AF_INET,SOCK_DGRAM,0);
+pp=bind(d_sock,(struct sockaddr*)&serv,sizeof(serv));
+       printf("serveur pret\n");
 
-/* reception du message */
-  read(service,mess_recu,sizeof(mess_recu));
-  printf("le serveur a recu : %s\n",mess_recu);
+from_size=sizeof(from);
 
-/* envoi du message */
-  strcpy(mess_envoi,"bonsoir");
-write(service,mess_envoi,sizeof(mess_envoi));
-  printf("le serveur a envoye au client : %s\n",mess_envoi);
-  close(d_sock);
+/* reception du tableau du  client */
+cc=recvfrom(d_sock,mess_recu,sizeof(mess_recu),0,(struct sockaddr*)&from,
+             &from_size);
+printf("le serveur a recu : %s\n",mess_recu);
+
+
+/*  envoi du tableau au client*/
+mess_envoi[0]='B';
+mess_envoi[1]='I';
+mess_envoi[2]='C';
+mess_envoi[3]='\0';
+cc=sendto(d_sock,mess_envoi,sizeof(mess_envoi),0,(struct sockaddr*)&from,
+             sizeof(from));
+
+printf("le  serveur a  envoye au client: %s\n",mess_envoi);
+
+
 }

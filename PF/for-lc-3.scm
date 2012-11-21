@@ -100,12 +100,12 @@
 
 ;;  Intermezzo
 
-;;  (writeln/return (car cp-list-example))
-;;  (writeln/return (caar cp-list-example))
-;;  (writeln/return (cdr cp-list-example))
-;;  (writeln/return (cadr cp-list-example))
-;;  (writeln/return (cdadr cp-list-example))
-;;  (writeln/return (caddr cp-list-example))
+(writeln/return (car cp-list-example))
+(writeln/return (caar cp-list-example))
+(writeln/return (cdr cp-list-example))
+(writeln/return (cadr cp-list-example))
+(writeln/return (cdadr cp-list-example))
+(writeln/return (caddr cp-list-example))
 
 ;;  Final
 
@@ -115,6 +115,9 @@
 (define dates-v2
   '((9 Nov 1998) (11 Nov 1997) (1 Jan 1900) (17 Nov 1997)
     (29 Feb 2000) (25 Dec 1999)))
+
+(define month
+  '((Jan Feb Mar Apr Mai Jun Jul Aug Sep Oct Nov Dec)))
 
 (define (position x l)
   (let thru ((l0 l)
@@ -241,4 +244,51 @@
   (iter-merge-groups p (make-groups p l)))
 
 (writeln/return (mergesort-v2 >= '(0 52 4 8 55 2 1 44 412 56 5874857 8 8867468 65 7)))
+
+(define (date<=? d0 d1)
+  (let ((y0 (caddr d0))
+        (y1 (caddr d1)))
+    (or (< y0 y1)
+        (and (= y0 y1)
+             (let ((m0 (cadr d0))
+                   (m1 (cadr d1)))
+               (or (< m0 m1)
+                   (and (= m0 m1)
+                        (<= (car d0) (car d1)))))))))
+
+(define (date-v2 d0 d1)
+   (let ((y0 (caddr d0))
+        (y1 (caddr d1)))
+    (or (< y0 y1)
+        (and (= y0 y1)
+             (let ((m0 (cadr d0))
+                   (m1 (cadr d1)))
+               (or (= (position m0 month) (position m1 month))
+                   (and (position m0 month) (position m1 month)
+                        (<= (car d0) (car d1)))))))))
+
+(writeln/return (date-v2 '(14 Mar 1992) '(21 Nov 2012)))
+
+(define (<arithmetical? x y thunk)
+  (cond ((< x y) #t)
+        ((= x y) (thunk))
+        (else #f)))
+
+(define (<reverse-arithmetical? x y thunk)
+  (cond ((> x y) #t)
+        ((= x y) (thunk))
+        (else #f)))
+
+
+(define (date-v3<=? d0 d1)
+  (<arithmetical? (caddr d0) (caddr d1)
+                (lambda ()
+                  (<arithmetical? (cadr d0) ( cadr d1)
+                                 (lambda ()
+                                   (<= (car d0) (car d1)))))))
+
+(define (mk-orelation p? thunk)
+  (cond ((p? x y) #t)
+        ((= x y) thunk)
+        (else #f)))
 

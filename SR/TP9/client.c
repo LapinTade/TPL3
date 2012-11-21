@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -5,34 +6,37 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-/* ce programme s execute sur un client quelconque  */
-/*  -- programme tcpc09.c -- Novembre 2009  */
-/*               protocole TCP                        */
-/* -------------------------------------------------*/
-
-main()
+int main()
 {
-  struct sockaddr_in serveur;
-  struct hostent *hp;
-  char mess_recu[BUFSIZ], mess_envoi[BUFSIZ],tab[128];
-  int  sock,cc,errno,i,j,n,l,d_sock;
-  int longe,service;
+struct sockaddr_in serveur, serv,from;
+struct hostent *hp;
 
-   hp=gethostbyname("127.0.0.1"); /* adresse IP du serveur */
-   memcpy(&serveur.sin_addr,hp->h_addr,hp->h_length);
-   serveur.sin_port=2010; /* numéro de port */
-   serveur.sin_family=AF_INET;
-   sock=socket(AF_INET,SOCK_STREAM,0); /* protocole TCP */
-   l=connect(sock,(struct sockaddr *)&serveur,sizeof(serveur));
-  
-/*  envoi du message au serveur*/
-   strcpy(mess_envoi,"bonjour");
-   cc=write(sock,mess_envoi,sizeof(mess_envoi));
-   printf("le  client a  envoye au serveur: %s\n",mess_envoi);
+char mess_recu[128], mess_envoi[128],tab[128];
+int  sock,cc;
+unsigned int serv_size;
+   
+   hp=gethostbyname("127.0.0.1"); /* numero IP du serveur distant */
 
-/* reception du message du serveur */
-  cc=read(sock,mess_recu,sizeof(mess_recu));
-  printf("le client a recu : %s \n",mess_recu);
+   memcpy((char*)&serveur.sin_addr,hp->h_addr,hp->h_length);
 
-  close(sock);
+   sock=socket(AF_INET,SOCK_DGRAM,0); /* socket UDP */
+   
+   serveur.sin_family=AF_INET; /* domaine  */
+
+   serveur.sin_port=2000; /* numero de port */
+
+   mess_envoi[1]='A';
+
+/*  envoi du tableau au   serveur*/
+
+cc=sendto(sock,mess_envoi,sizeof(mess_envoi),0,(struct sockaddr*)&serveur,
+             sizeof(serveur));
+
+printf("le  client a  envoye au serveur: %s\n",mess_envoi;
+
+/* reception du tableau du  serveur */
+
+cc=recvfrom(sock,mess_recu,sizeof(mess_recu),0,(struct sockaddr*)&serv,
+             &serv_size);
+printf("le client  a recu : %s\n",mess_recu);
 }
