@@ -287,17 +287,21 @@ void supprimeTransition(automate* au, int src, int targ, char alpha) {
 	free(tmpTrans);
 }
 
-void supprimeEtat(automate* au, int state) {
+/*void supprimeEtat(automate* au, int state) {
 	int j,k;
 	int* tmp;
 	liste* tmp;
-
+	liste*** tmpListeTrans;
 
 	if(state >= au->size || state < 0) {
 		printf("L'etat n'existe pas !\n");
 		return;
 	}
-}
+
+	for(i=0; i<au->size;i++) {
+
+	}
+}*/
 
 int main() {
 	automate* au = (automate*) malloc(sizeof(automate));
