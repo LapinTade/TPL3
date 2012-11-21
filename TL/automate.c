@@ -58,12 +58,12 @@ void ajouteListe(liste** l,int q){
 	ptl->nxt=tmp;
 }
 
-void ajouteTransition(automate* au, int src, int cbl, char alpha){
-	if (src >= au->size || src < 0 || cbl >= au->size || cbl < 0 || ((int)(alpha - 'a') >= au->sizeAlpha)){
+void ajouteTransition(automate* au, int src, int targ, char alpha){
+	if (src >= au->size || src < 0 || targ >= au->size || targ < 0 || ((int)(alpha - 'a') >= au->sizeAlpha)){
 		printf("L'Etat ou la lettre n'existe pas. \n");
 		return;
 	}
-	ajouteListe(&(au->trans[src][(int)(alpha -'a')]), cbl);	
+	ajouteListe(&(au->trans[src][(int)(alpha -'a')]), targ);	
 }
 
 void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
@@ -117,7 +117,7 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 		for(j=0; j<k; j++) {
 			printf("\nEtat cible ? (de 0 à %d: ", au->size-1);
 			scanf ("%d",&targ);
-			printf("\nPar transition ? (a,b... /!\\ à la valeur !)");
+			printf("\nPar transition ? (a, ..., %c /!\\ à la valeur !)", au->sizeAlpha+97);
 			scanf ("%c",&tran);
 
 			ajouteTransition(au,i,targ,tran);
@@ -152,9 +152,10 @@ void afficheAutomate(automate au) {
 	printf("\nLes Transitions\n");
 	
 	for (i=0; i<au.size; i++){
-	printf("------------------------------\n");
+	printf(">>>\n");
 		printf("\nDepuis l'etat %d",i);
 		for (j=0; j<au.sizeAlpha; j++){
+			// On affiche la lettre de letat 97 étant 'a'
 			printf("\navec la lettre %c :\n", c = (unsigned char) j+97);	
 			liste* tmp;
 			tmp = au.trans[i][j];
@@ -184,6 +185,76 @@ int compteTransitions(automate au){
 				tmp = tmp->nxt;
 			}
 		}
+	}
+
+	return nb;
+}
+
+int deterministe(automate au) {
+	int i,j;
+	int ref = 1;
+	int state = 0;
+
+	// On regarde si il n'y a qu'un seul etat initial
+	while(state < au.size) {
+		if(au.initial[state] ==1) {
+			// Au premier état on met la reference a 0. Si il y a un
+			// deuxieme etat on retournera directement 0
+			if(ref) {
+				ref = 0;
+			} else {
+				return 0;
+			}
+			state++;
+		}
+	}
+
+	// On a bien un seul etat initial, on remet la ref a 1
+	ref = 1;
+
+	// On regarde si il y a au max une transition par lettre
+	for(i=0; i<au.size;i++) {
+		for(j=0; j<au.sizeAlpha; j++) {
+			// Si pour une lettre on en a UNE seule (il faut qu'elle existe)
+			if(au.trans[i][j] != NULL && au.trans[i][j]->nxt != NULL) {
+				ref = 0;
+			}
+		}
+	}
+
+	return ref;
+}
+
+int complet(automate au) {
+	int i,j;
+	int nb =0;
+
+	// On regarde si toute les lettres sont utilisees pour chaques etats
+	for(i=0; i<au.size;i++) {
+		for(j=0; j<au.sizeAlpha; j++) {
+			if(au.trans[i][j] != NULL) {
+				nb++;
+			}
+		}
+		// On compte les transitions par lettres, si leurs nombres
+		// est different de sizeAlpha, l'automate n'est pas complet
+		if(nb != au.sizeAlpha) {
+			return 1;
+		}
+		nb = 0;
+	}
+
+	return 1;
+}
+
+void supprimeTransition(automate* au, int src, int targ, char alpha) {
+	liste* tmpTrans;
+	liste* lastTmp;
+	lastTmp = NULL;
+
+	if (src >= au->size || src < 0 || targ >= au->size || targ < 0 || ((int)(alpha - 'a') >= au->sizeAlpha)){
+		printf("L'Etat ou la lettre n'existe pas. \n");
+		return;
 	}
 }
 
