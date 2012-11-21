@@ -256,6 +256,33 @@ void supprimeTransition(automate* au, int src, int targ, char alpha) {
 		printf("L'Etat ou la lettre n'existe pas. \n");
 		return;
 	}
+
+	tmpTrans = au->trans[src][(int) (alpha - 97)];
+
+	// Si la transition demandee n'existe pas on sort
+	if(tmpTrans == NULL) {
+		return;
+	}
+
+	// On recherche la transition cible. lastTmp est la transition precedent
+	// la transition actuelle. On sort de la boucle quand on a notre etat
+	while(tmpTrans != NULL && tmpTrans->state != targ) {
+		lastTmp = tmpTrans;
+		tmpTrans = tmpTrans->nxt;
+	}
+
+	// Si la transition n'existe pas (notre cible est la premiere)
+	// On met la transition suivant en premier de la liste des transi
+	// Sinon on enleve notre element l'element suivant de la transition
+	// precedante devient l'element suivant de la transtion  courantesupprimee
+	// et on libere l'element courant
+	if(lastTmp == NULL) {
+		au->trans[src][(int) (alpha - 97)] = tmpTrans->nxt;
+	} else {
+		lastTmp->nxt = tmpTrans->nxt;
+	}
+
+	free(tmpTrans);
 }
 
 int main() {
