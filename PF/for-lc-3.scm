@@ -287,8 +287,26 @@
                                  (lambda ()
                                    (<= (car d0) (car d1)))))))
 
-(define (mk-orelation p? thunk)
-  (cond ((p? x y) #t)
-        ((= x y) thunk)
-        (else #f)))
+;(define (mk-orelation p? thunk)
+;  (cond ((p? x y) #t)
+;        ((= x y) thunk)
+;        (else #f)))
 
+(define (<mk-mlbitex-orelation rel-2? eqp-2?)
+  (lambda (y y0 k0) (or (rel-2? y y0) (and (eqp-2? y y0) (k0)))))
+
+(define <arithmtical-V2? (<mk-mlbitex-orelation < =))
+(define <reverse-arithmetical-V2? (<mk-mlbitex-orelation > =))
+
+(define (<=** x0 x1)
+  (or (eq? x1 '**)
+      (and (not (eq? x0 '*))
+           (<= x0 x1))))
+
+(writeln/return (mergesort-v2 
+              (lambda(c0 c1)
+                (<arithmetical? (cadr c0) (cadr c1)
+                                (lambda ()
+                                  (<=** (caddr c0)
+                                        (caddr c1)))))
+              composers))
