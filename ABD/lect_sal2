@@ -1,2 +1,2 @@
 USE transaction_test;
-UPDATE test SET val=2 WHERE id=1;
+UPDATE test SET val=3 WHERE id=2;
