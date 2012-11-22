@@ -1,0 +1,8 @@
+CREATE TABLE Etudiant (
+    NUMETU varchar(25),
+    NOM varchar(25),
+    DATENAISS date,
+    RUE varchar(25),
+    CP int(5),
+    VILLE varchar(25)
+)engine=InnoDB;
