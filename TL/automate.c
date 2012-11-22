@@ -16,6 +16,11 @@ typedef struct {
          liste*** trans;
 } automate;
 
+typedef struct {
+	int nombre_sommets;
+	liste** voisins;
+} graphe;
+
 
 void ajouteListe(liste** l,int q){
 	liste* ptl ;
@@ -66,7 +71,7 @@ void ajouteTransition(automate* au, int src, int targ, char alpha){
 	ajouteListe(&(au->trans[src][(int)(alpha - 97)]), targ);	
 }
 
-void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
+void construitAutomateExemple(automate* au, int size, int sizeAlpha) {
 	int i,j,k;
 	int targ;
 	char tran;
@@ -77,12 +82,13 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 
 	// Etats initiaux
 	au->initial = (int*) malloc(au->size*sizeof(int));
+	/*
 	for(i=0; i<au->size; i++) {
 		printf("Etat:%d, Initial? Oui:1 | Non:0\n", i);
 		scanf ("%d",&k);
 		au->initial[i] = k;
-	}
-	/*
+	}//*/
+	//*
 	au->initial[0]=1;
 	au->initial[1]=0;
 	au->initial[2]=1;
@@ -91,12 +97,13 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 
 	// Etats finaux
 	au->final = (int*) malloc(au->size*sizeof(int));
+	/*
 	for(i=0; i<au->size; i++) {
 		printf("Etat:%d, Final? Oui:1 | Non:0\n", i);
 		scanf ("%d",&k);
 		au->initial[i] = k;
-	}
-	/*
+	}//*/
+	//*
 	au->final[0]=0;
 	au->final[1]=0;
 	au->final[2]=1;
@@ -112,6 +119,7 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 		}
 	}
 
+	/*
 	for(i=0;i<au->size;i++) {
 		printf("Etat: %d | ", i);
 		printf("Combien de transitions voulez vous ajouter\n");
@@ -124,12 +132,26 @@ void ConstruitAutomateExemple(automate* au, int size, int sizeAlpha) {
 			printf("%c\n", tran);
 			ajouteTransition(au,i,targ,tran);
 		}
-	}
+	}//*/
+	//*
+	ajouteTransition(au,0,1,'a');
+	ajouteTransition(au,0,2,'a');
+	ajouteTransition(au,0,3,'a');
+
+	ajouteTransition(au,1,3,'b');
+
+	ajouteTransition(au,2,3,'a');
+	ajouteTransition(au,2,4,'b');
+
+	ajouteTransition(au,3,3,'b');
+	ajouteTransition(au,3,4,'b');
+
+	ajouteTransition(au,4,4,'a');//*/
 
 
 }
 
-void afficheAutomate(automate au) {
+void afficheAutomate(automate au){
 	int i,j;
 	unsigned char c;
 
@@ -154,10 +176,9 @@ void afficheAutomate(automate au) {
 	printf("\nLes Transitions\n");
 	
 	for (i=0; i<au.size; i++){
-	printf(">>>\n");
+	printf("------------------------------\n");
 		printf("\nDepuis l'etat %d",i);
 		for (j=0; j<au.sizeAlpha; j++){
-			// On affiche la lettre de letat 97 étant 'a'
 			printf("\navec la lettre %c :\n", c = (unsigned char) j+97);	
 			liste* tmp;
 			tmp = au.trans[i][j];
@@ -170,6 +191,7 @@ void afficheAutomate(automate au) {
 		}
 	}
 	printf("\n");
+	
 }
 
 int compteTransitions(automate au){
@@ -287,10 +309,28 @@ void supprimeTransition(automate* au, int src, int targ, char alpha) {
 	free(tmpTrans);
 }
 
-/*void supprimeEtat(automate* au, int state) {
-	int j,k;
+void supprimeTransEtat(automate* au, int state) {
+	if(state >= au->size || state < 0) {
+		printf("L'etat n'existe pas\n");
+		return;
+	}
+
+	liste* tmpCurrent;
+	int i;
+
+	for(i=0;i<au->sizeAlpha; i++) {
+		tmpCurrent = au->trans[state][i];
+		while(tmpCurrent != NULL) {
+			supprimeTransition(au, state, tmpCurrent->state,(char)('a'+i));
+			tmpCurrent = au->trans[state][i];
+		}
+	}
+}
+
+void supprimeEtat(automate* au, int state) {
+	int i,j,k;
 	int* tmp;
-	liste* tmp;
+	liste* tmpLst;
 	liste*** tmpListeTrans;
 
 	if(state >= au->size || state < 0) {
@@ -298,14 +338,198 @@ void supprimeTransition(automate* au, int src, int targ, char alpha) {
 		return;
 	}
 
+	// Supprime toute les transitions de l'etat state
 	for(i=0; i<au->size;i++) {
-
+		if(i == state) {
+			supprimeTransEtat(au, state);
+		} else {
+			for(j=0; j<au->sizeAlpha; j++){
+				// Supprime les transitions en direction de state
+				supprimeTransition(au, i, state, ((char)('a'+j)));
+			}
+		}
 	}
-}*/
+
+	//Toutes les transitions en provenance et vers cet état sont enlevées  
+	au->size = au->size - 1;
+	tmp = au->initial;
+	au->initial = (int*) malloc(au->size*sizeof(int));
+	j = 0;
+	for(i=0; i<=au->size; i++){
+		if(i != state){
+			au->initial[j] = tmp[i];
+			j++;
+		}
+	}
+	free(tmp);
+	tmp = au->final;
+	au->final = (int*) malloc(au->size*sizeof(int));
+	j = 0;
+	for(i=0; i<=au->size; i++){
+		if(i != state){
+			au->final[j] = tmp[i];
+			j++;
+		}
+	}
+	free(tmp);
+
+	//Les variables et les deux tableaux de type d'etats sont changés
+
+	tmpListeTrans = au->trans;
+	
+	au->trans = (liste***) malloc (au->size*sizeof(liste**));
+
+	j = 0;
+	for(i=0; i<=au->size; i++){
+		if(i != state){
+			au->trans[j] = tmpListeTrans[i];
+			j++;
+		}else{
+			free(tmpListeTrans[i]);
+			
+		}
+	}
+
+	free(tmpListeTrans);
+
+	//Le tableau des transitions est changé, il suffit de décrémenter les états
+
+	for(i=0; i<au->size; i++){
+		for(j=0; j<au->sizeAlpha; j++){
+			tmpLst = au->trans[i][j];
+			
+			while(tmpLst != NULL){
+				if(tmpLst->state > state){
+					tmpLst->state = tmpLst->state - 1;
+				}
+				tmpLst = tmpLst->nxt;
+			}
+
+				
+		}
+	}
+}
+
+////////// FONCTION COMPLETE AUOMATE A FAIRE
+
+
+
+void fusionEtats(automate* au, int etat1, int etat2){
+	int i,j;
+	liste* tmpLst;
+
+	if (etat1 >= au->size || etat1 < 0 || etat2 >= au->size || etat2 < 0 ){
+		printf("L'Etat ou la lettre n'existe pas. \n");
+		return;
+	}
+	
+	
+
+	// on met les transitions de l'état 2 dans l'état 1
+	for(i=0; i<au->size; i++){
+		for(j=0; j<au->sizeAlpha; j++){
+			tmpLst = au->trans[i][j];
+			while(tmpLst != NULL){
+				if(i==etat2){
+					if(tmpLst->state == etat2){
+						ajouteTransition(au,etat1,etat1,('a'+j));
+					}else{
+						ajouteTransition(au,etat1,tmpLst->state,('a'+j));
+					}
+				}
+				if(tmpLst->state == etat2){
+					ajouteTransition(au,i,etat1,('a'+j));
+				}
+				tmpLst = tmpLst->nxt;	
+			}
+		}
+	}
+
+// on met à jour les tableaux d'états initiaux et finaux
+
+	if(au->initial[etat2] == 1){
+		au->initial[etat1] = 1;
+	}
+	if(au->final[etat2] == 1){
+		au->final[etat1] = 1;
+	}
+
+	supprimeEtat(au,etat2);	
+}
+
+
+///////////////////////// PARTIE DU VIDE / GRAPHE
+
+//fonction de parcour en profondeur
+void parcour(graphe* au, int p, int** tab){
+	int* color = *tab;
+
+	color[p] = 1;
+	liste* tmp = (au->voisins)[p];
+	while(tmp != NULL){
+		if(color[tmp->state] == 0){
+			parcour(au, tmp->state, tab);
+		}
+		tmp = tmp->nxt;
+	}
+}
+
+int chemin(graphe* gr,int p, int q){
+	int i;
+	int ** color;
+	int *tmp;
+	int res = 0;
+	color = (int **) malloc (sizeof(int*));
+	*color = (int*) malloc((gr->nombre_sommets)*sizeof(int));
+	for(i=0; i<gr->nombre_sommets; i++){
+		(*color)[i] = 0;
+	}
+
+	for(i=0; i<(gr->nombre_sommets); i++){
+		parcour(gr,p,color);
+	}
+
+		
+	tmp = (*color);
+	res = tmp[q];
+	free(*color);
+	free(color);
+	return res;	
+}
+
+void automateToGraphe(automate* au, graphe* gr){
+	int i,j;
+	liste* tmp;
+
+	// initialisation du graphe avec la taille 
+	gr->nombre_sommets = au->size;
+
+	// création de la liste des voisins
+	gr->voisins = (liste**)malloc(gr->nombre_sommets*sizeof(liste*));
+	for(i=0; i<gr->nombre_sommets; i++){
+		gr->voisins[i] = NULL;
+	}
+	// ajout des voisins suivant les transitions présentes dans l'automate
+	for(i=0;i<au->size;i++){
+		for(j=0;j<au->sizeAlpha;j++){
+			tmp = au->trans[i][j];
+			while(tmp != NULL){
+				ajouteListe(&(gr->voisins[i]),tmp->state);
+				tmp = tmp->nxt; 
+			}
+		}
+	}
+
+}
 
 int main() {
 	automate* au = (automate*) malloc(sizeof(automate));
-	ConstruitAutomateExemple(au, 6, 2);
+	construitAutomateExemple(au, 6, 2);
+	afficheAutomate(*au);
+	supprimeTransition(au,1,3,'b');
+	afficheAutomate(*au);
+
+
 
 	return 0;
 }
