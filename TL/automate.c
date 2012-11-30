@@ -23,8 +23,8 @@ typedef struct {
 
 
 void ajouteListe(liste** l,int q){
-	liste* ptl ;
-	liste* tmp ;
+	liste* ptl;
+	liste* tmp;
 	ptl=*l;
 	if(!ptl){
 		ptl=(liste*) malloc(sizeof(liste));
@@ -410,8 +410,42 @@ void supprimeEtat(automate* au, int state) {
 	}
 }
 
-////////// FONCTION COMPLETE AUOMATE A FAIRE
+automate completer(automate au) {
+	liste*** tmp = (liste***) malloc((au.size + 1)*sizeof(liste**));
+    int* newinit = (int*) malloc((au.size + 1)*sizeof(int));
+    int* newfinal = (int*) malloc((au.size + 1)*sizeof(int));
 
+    int i,j,db = au.size;
+
+    for(i=0;i<au.size;i++) {
+        tmp[i] = au.trans[i];
+        newinit[i] = au.initial[i];
+        newfinal[i] = au.final[i];
+    }
+
+    tmp[db] =(liste**) malloc(au.sizeAlpha*sizeof(liste*));
+
+    for(j=0;j<au.sizeAlpha;j++) {
+        tmp[db][j] = NULL;
+    }
+    newinit[db] = 0;
+    newfinal[db] = 0;
+
+    au.size = db + 1;
+    au.trans = tmp;
+    au.initial = newinit;
+    au.final = newfinal;
+
+    for(i=0;i<au.size;i++) {
+        for(j=0;j<au.sizeAlpha;j++) {
+            if(au.trans[i][j] == NULL) {
+                ajouteTransition(&au,i,db,(char) j + 97);
+            }
+        }
+    }
+
+    return au;
+}
 
 
 void fusionEtats(automate* au, int etat1, int etat2){
@@ -523,12 +557,143 @@ void automateToGraphe(automate* au, graphe* gr){
 }
 
 int main() {
+   	int continuer = 1;
+   	int continuer2 = 1;
 	automate* au = (automate*) malloc(sizeof(automate));
-	construitAutomateExemple(au, 6, 2);
-	afficheAutomate(*au);
-	supprimeTransition(au,1,3,'b');
-	afficheAutomate(*au);
+    int choix = 0;
+    int size, sizeAlpha;
+    int i, k, j;
+    int targ;
+	char tran;
 
+    while(continuer) {
+    	printf("Voulez-vous utiliser un automate exemple ? (1: Oui; 2 Non)\n");
+    	scanf("%i", &choix);
+    	switch(choix) {
+    		case 1:
+    			construitAutomateExemple(au, 6, 3);
+    			afficheAutomate(*au);
+    			break;
+    		case 2:
+    			printf("Taille?(size): \n");
+    			scanf("%i", &size);
+    			printf("Taille Alpha?(sizeAlpha: \n");
+    			scanf("%i", &sizeAlpha);
+
+    			au->size = size;
+				au->sizeAlpha = sizeAlpha;
+
+				au->initial = (int*) malloc(au->size*sizeof(int));
+
+				for(i=0; i<au->size; i++) {
+					printf("Etat:%d, Initial? Oui:1 | Non:0\n", i);
+					scanf("%d",&k);
+					au->initial[i] = k;
+				}
+
+				au->final = (int*) malloc(au->size*sizeof(int));
+
+				for(i=0; i<au->size; i++) {
+					printf("Etat:%d, Final? Oui:1 | Non:0\n", i);
+					scanf ("%d",&k);
+					au->initial[i] = k;
+				}
+
+				// Creation/initialisations de transitions vides
+				au->trans = (liste***) malloc(au->size*sizeof(liste***));
+				for(i=0;i<au->size;i++){
+					au->trans[i]=(liste**) malloc(au->sizeAlpha*sizeof(liste*));
+					for(k=0;k<au->sizeAlpha;k++){
+						au->trans[i][k]=NULL;
+					}
+				}
+
+				for(i=0;i<au->size;i++) {
+					printf("Etat: %d | ", i);
+					printf("Combien de transitions voulez vous ajouter\n");
+					scanf ("%d",&k);
+					for(j=0; j<k; j++) {
+						printf("\nEtat cible ? (de 0 à %d): ", au->size-1);
+						scanf ("%d",&targ);
+						printf("\nPar transition ? (a, ..., %c /!\\ à la valeur !)", au->sizeAlpha+96); // 97:a; -1 pour la taille
+						scanf ("%s",&tran);
+						printf("%c\n", tran);
+						ajouteTransition(au,i,targ,tran);
+					}
+				}
+				afficheAutomate(*au);
+
+    			break;
+    	}
+
+    	int selection1, selection2;
+    	char trans;
+    	while(continuer2) {
+    		printf("\n>1. Afficher l'automate\n>2. Completer l'automate\n>3. L'automate est-il complet ?\n>4. L'automate est-il deterministe?\n>5. Supprimer un etat de l'automate\n>6. Fusionner 2 etats de l'automate\n>7. Supprimer une transition de l'automate\n>8. Ajouter une transition a l'automate\n>9. Arreter programme\n> Choix : ");
+			scanf("%i", &choix);
+
+			switch(choix) {
+				case 1:
+					afficheAutomate(*au);
+					break;
+				case 2:
+					printf("Completition:\n");
+					*au = completer(*au);
+					break;
+				case 3:
+					if(complet(*au))
+                        printf("\nL'automate est complet.");
+                    else
+                        printf("\nL'automate n'est pas complet.");
+                    break;
+                case 4:
+                	if(deterministe(*au))
+                        printf("\nL'automate est deterministe.");
+                    else
+                        printf("\nL'automate n'est pas deterministe.");
+                    break;
+                case 5:
+                	printf("\nEntrer le numero de l'etat : ");
+                    scanf("%i", &selection1);
+                    supprimeEtat(au,selection1);
+                    break;
+                case 6:
+                	printf("Fonction bug, segmentation error\n");
+                	printf("\nEntrer le numero du premier etat : ");
+                    scanf("%i",&selection1);
+                    printf("\nEntrer le numero du second etat : ");
+                    scanf("%i",&selection2);
+					fusionEtats(au,selection1,selection2);
+					break;
+				case 7:
+					printf("\nEntrer le numero de l'etat depart : ");
+                    scanf("%d",&selection1);
+                    printf("\nEntrer le numero de l'etat d'arrivee : ");
+                    scanf("%d",&selection2);
+                    printf("\nEntrer la lettre de la transition : ");
+                    scanf("%c",&trans);
+                    scanf("%c",&trans);
+                    supprimeTransition(au,selection1,selection2,trans);
+                    break;
+                case 8:
+                	printf("\nEntrer le numero de l'etat depart : ");
+                    scanf("%d",&selection1);
+                    printf("\nEntrer le numero de l'etat d'arrivee : ");
+                    scanf("%d",&selection2);
+                    printf("\nEntrer la lettre de la transition : ");
+                    scanf("%c",&trans);
+                    scanf("%c",&trans);
+                    ajouteTransition(au,selection1,selection2,trans);
+                    break;
+                case 9:
+                	continuer = 0;
+                	continuer2 = 0;
+                	break;
+                default:
+                	printf("Mauvaise entrée\n");
+			}
+    	}
+    }
 
 
 	return 0;
