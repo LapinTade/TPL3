@@ -78,7 +78,7 @@ void construitAutomateExemple(automate* au) {
 
 	// Tailles générales de l'automates
 	au->size = 6;
-	au->sizeAlpha = 3;
+	au->sizeAlpha = 2;
 
 	// Etats initiaux
 	au->initial = (int*) malloc(au->size*sizeof(int));
@@ -158,7 +158,7 @@ void construitAutomateExemple2(automate* au) {
 
 	// Tailles générales de l'automates
 	au->size = 4;
-	au->sizeAlpha = 3;
+	au->sizeAlpha = 2;
 
 	// Etats initiaux
 	au->initial = (int*) malloc(au->size*sizeof(int));
@@ -291,10 +291,9 @@ int deterministe(automate au) {
 			} else {
 				return 0;
 			}
-			state++;
 		}
+		state++;
 	}
-
 	// On a bien un seul etat initial, on remet la ref a 1
 	ref = 1;
 
@@ -307,7 +306,6 @@ int deterministe(automate au) {
 			}
 		}
 	}
-
 	return ref;
 }
 
