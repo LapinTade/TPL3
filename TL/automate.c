@@ -17,8 +17,8 @@ typedef struct {
 } automate;
 
 typedef struct {
-	int nombre_sommets;
-	liste** voisins;
+	int nb_summit;
+	liste** neighbours;
 } graphe;
 
 
@@ -499,7 +499,7 @@ void parcour(graphe* au, int p, int** tab){
 	int* color = *tab;
 
 	color[p] = 1;
-	liste* tmp = (au->voisins)[p];
+	liste* tmp = (au->neighbours)[p];
 	while(tmp != NULL){
 		if(color[tmp->state] == 0){
 			parcour(au, tmp->state, tab);
@@ -514,12 +514,12 @@ int chemin(graphe* gr,int p, int q){
 	int *tmp;
 	int res = 0;
 	color = (int **) malloc (sizeof(int*));
-	*color = (int*) malloc((gr->nombre_sommets)*sizeof(int));
-	for(i=0; i<gr->nombre_sommets; i++){
+	*color = (int*) malloc((gr->nb_summit)*sizeof(int));
+	for(i=0; i<gr->nb_summit; i++){
 		(*color)[i] = 0;
 	}
 
-	for(i=0; i<(gr->nombre_sommets); i++){
+	for(i=0; i<(gr->nb_summit); i++){
 		parcour(gr,p,color);
 	}
 
@@ -536,25 +536,298 @@ void automateToGraphe(automate* au, graphe* gr){
 	liste* tmp;
 
 	// initialisation du graphe avec la taille 
-	gr->nombre_sommets = au->size;
+	gr->nb_summit = au->size;
 
 	// création de la liste des voisins
-	gr->voisins = (liste**)malloc(gr->nombre_sommets*sizeof(liste*));
-	for(i=0; i<gr->nombre_sommets; i++){
-		gr->voisins[i] = NULL;
+	gr->neighbours = (liste**)malloc(gr->nb_summit*sizeof(liste*));
+	for(i=0; i<gr->nb_summit; i++){
+		gr->neighbours[i] = NULL;
 	}
-	// ajout des voisins suivant les transitions présentes dans l'automate
+	// ajout des neighbours suivant les transitions présentes dans l'automate
 	for(i=0;i<au->size;i++){
 		for(j=0;j<au->sizeAlpha;j++){
 			tmp = au->trans[i][j];
 			while(tmp != NULL){
-				ajouteListe(&(gr->voisins[i]),tmp->state);
+				ajouteListe(&(gr->neighbours[i]),tmp->state);
 				tmp = tmp->nxt; 
 			}
 		}
 	}
 
 }
+
+
+void afficheGraphe(graphe G){
+	int i;
+	liste* tmp;
+
+	printf("---> Graphe <---\n");
+	for(i=0 ; i<G.nb_summit ; i++){
+		tmp = G.neighbours[i];
+		printf("%d : ",i);
+
+		while(tmp != NULL){
+			printf(" %d,",tmp->state);
+			tmp = tmp->nxt; 
+		}
+
+		printf("\n");
+	}
+	
+}
+
+
+void supprimeGraphe(graphe* gr){
+	int i;
+	liste* tmp_current;
+	liste* tmp_delete;
+
+	// Ici on supprime les voisins de chaques sommets
+	for(i=0 ; i<gr->nb_summit ; i++){
+		tmp_current = gr->neighbours[i];
+		while(tmp_current != NULL){
+			tmp_delete = tmp_current;
+			tmp_current = tmp_current->nxt;
+			free(tmp_delete);
+		}
+	}
+
+	// libération de la mémoire
+	free(gr->neighbours);
+	free(gr);
+	gr = NULL;
+}
+
+
+int langageVide(automate* au){
+	int i,k;
+	int sum = 0;
+
+	graphe* gr = (graphe*)malloc(sizeof(graphe));
+
+	automateToGraphe(au, gr);
+
+	// On verifie si à partir de chaque état initial on a un chemin.
+	// Si la sum == 0; alors aucun chemin ne part des états initials
+	// Le langage est donc vide.
+
+	for(i=0 ; i<au->size ; i++){
+		if(au->initial[i] == 1){
+			for(k=0 ; k<au->size ; k++){
+				if(au->final[k] == 1){
+					sum = sum + chemin(gr,i,k);
+				}
+			}
+		}
+	}
+
+	supprimeGraphe(gr);
+	
+	if(sum == 0){
+		return 1;
+	}else{
+		return 0;
+	}
+}
+
+
+void supprimeNonCoAccessibles(automate* au){
+	int i, k, sum, size;
+	graphe* gr = (graphe*)malloc(sizeof(graphe));
+	i = 0;
+	size = au->size;
+	int toDelete[size];
+
+	for(k=0; k<size; k++){
+		toDelete[k] = 0;
+	}
+
+	automateToGraphe(au, gr);
+	afficheGraphe(*gr);
+
+	// Recherche des états non coaccessible
+	// Pour chaque état on compte le nombre de chemin qui y parte
+	// Si cette sum == 0 alors l'état est non coaccessible
+	// On l'ajoute alors dans la liste des états a supprimer
+	for(i=0; i<gr->nb_summit; i++){
+		sum = 0;
+		for(k=0; k < size; k++){
+			if(au->final[k] == 1){
+				sum += chemin(gr,i,k);
+			}
+		}
+		if(sum == 0){
+			toDelete[i] = 1;
+		}
+	}
+
+	// supression des états
+	sum = 0;
+	for(k=0; k < size; k++){
+		if(toDelete[k] == 1){
+			supprimeEtat(au,(k - sum));
+			sum++;
+		}
+	}
+	supprimeGraphe(gr);
+
+}
+
+
+void supprimeNonAccessibles(automate* au){
+	int i, k, sum, size;
+	graphe* gr = (graphe*)malloc(sizeof(graphe));
+	i = 0;
+	size = au->size;
+	int toDelete[size];
+
+	for(k=0; k<size; k++){
+		toDelete[k] = 0;
+	}
+
+	automateToGraphe(au, gr);
+	afficheGraphe(*gr);
+
+	// Recherche des états non accessible
+	// Pour chaque état on compte le nombre de chemin qui y mène
+	// Si cette sum == 0 alors l'état est non accessible
+	// On l'ajoute alors dans la liste des états a supprimer
+	for(i=0; i<gr->nb_summit; i++){
+		sum = 0;
+		for(k=0; k < size; k++){
+			if(au->final[k] == 1){
+				sum += chemin(gr,k,i);
+			}
+		}
+		if(sum == 0){
+			toDelete[i] = 1;
+		}
+	}
+
+	// supression des états
+	sum = 0;
+	for(k=0; k < size; k++){
+		if(toDelete[k] == 1){
+			supprimeEtat(au,(k - sum));
+			sum++;
+		}
+	}
+	supprimeGraphe(gr);
+
+}
+
+
+void produit(automate* au1, automate* au2, automate* prod){
+	int m,i,j;
+	int taille, currentSizeAlpha;
+	automate* petit;
+	automate* grand;
+	liste* tmpPetit;
+	liste* tmpGrand;
+
+	// La taille de l'automate sous produit est celle du plus petit automate
+
+	if(au1->size >= au2->size){
+		m = au1->size;
+		grand = au1;
+		petit = au2;
+	}else{
+		m = au2->size;
+		grand = au2;
+		petit = au1;
+	}
+
+	taille = m * petit->size;
+	
+	if(au1->sizeAlpha >= au2->sizeAlpha){
+		currentSizeAlpha = au2->sizeAlpha;
+	}else{
+		currentSizeAlpha = au1->sizeAlpha;
+	}
+
+// initialisation du nouvel automate
+
+	prod->size = taille;
+	prod->sizeAlpha = currentSizeAlpha;
+
+	
+	prod->initial=(int*) malloc(taille*sizeof(int));
+	prod->final=(int*) malloc(taille*sizeof(int));
+
+// gestion états initiaux/finaux
+
+	for(i=0; i<taille; i++){
+		if(petit->initial[i/m] == 1 && grand->initial[i%m] == 1){
+			prod->initial[i] = 1;
+		}else{
+			prod->initial[i] = 0;
+		}
+
+
+		if(petit->final[i/m] == 1 && grand->final[i%m] == 1){
+			prod->final[i] = 1;
+		}else{
+			prod->final[i] = 0;
+		}
+	}
+
+	
+// création de la liste des transition
+	prod->trans=(liste***) malloc(taille*sizeof(liste**));
+	for(i=0;i<taille;i++){
+		prod->trans[i]=(liste**) malloc(currentSizeAlpha*sizeof(liste*));
+		for(j=0;j<currentSizeAlpha;j++){
+			prod->trans[i][j]=NULL;
+		}
+	}
+
+
+// ajout des transitions d'après le modèle mathématique proposé
+
+	for(i=0; i<taille; i++){
+		for(j=0; j<currentSizeAlpha; j++){
+			tmpGrand = grand->trans[i%m][j] ;
+			tmpPetit = petit->trans[i/m][j] ;
+
+
+			while(tmpPetit != NULL){
+				
+				while(tmpGrand != NULL){
+					
+					ajouteTransition(prod,i,((tmpPetit->state * m)+tmpGrand->state),(char)('a' + j));
+					tmpGrand = tmpGrand->nxt;
+				}
+				tmpPetit = tmpPetit->nxt;
+				tmpGrand = grand->trans[i%m][j] ;
+			}
+
+		}
+	}
+	
+	
+}
+
+
+
+int intersectionVide(automate* au1, automate* au2){
+	automate* tmp = (automate*)malloc(sizeof(automate));
+	int res = 0;
+
+	// On effectue le produit des deux automates
+	// Le langage est vide si l'intersection est vide
+
+	produit(au1, au2, tmp);
+
+	res = langageVide(tmp);	
+
+	//supprimeAutomate(tmp);
+
+	// REtour 1 si l'intersection est vide, et 0 le contraire
+	return res;
+	
+}
+
+
 
 int main() {
    	int continuer = 1;
