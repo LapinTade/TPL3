@@ -21,7 +21,7 @@ typedef struct {
 	liste** neighbours;
 } graphe;
 
-
+// Fonction qui ajouter un element à une liste
 void ajouteListe(liste** l,int q){
 	liste* ptl;
 	liste* tmp;
@@ -63,6 +63,7 @@ void ajouteListe(liste** l,int q){
 	ptl->nxt=tmp;
 }
 
+// Fonction qui ajoute une transition qui part de src vers targ, avec lettre alpha
 void ajouteTransition(automate* au, int src, int targ, char alpha){
 	if (src >= au->size || src < 0 || targ >= au->size || targ < 0 || ((int)(alpha - 'a') >= au->sizeAlpha)){
 		printf("L'Etat ou la lettre n'existe pas. \n");
@@ -71,13 +72,14 @@ void ajouteTransition(automate* au, int src, int targ, char alpha){
 	ajouteListe(&(au->trans[src][(int)(alpha - 97)]), targ);	
 }
 
+// Construit un automate exemple 
 void construitAutomateExemple(automate* au) {
 	int i,j,k;
 	int targ;
 	char tran;
 
 	// Tailles générales de l'automates
-	au->size = 6;
+	au->size = 5;
 	au->sizeAlpha = 2;
 
 	// Etats initiaux
@@ -90,8 +92,8 @@ void construitAutomateExemple(automate* au) {
 	}//*/
 	//*
 	au->initial[0]=1;
-	au->initial[1]=0;
-	au->initial[2]=1;
+	au->initial[1]=1;
+	au->initial[2]=0;
 	au->initial[3]=0;
 	au->initial[4]=0;//*/
 
@@ -106,7 +108,7 @@ void construitAutomateExemple(automate* au) {
 	//*
 	au->final[0]=0;
 	au->final[1]=0;
-	au->final[2]=1;
+	au->final[2]=0;
 	au->final[3]=0;
 	au->final[4]=1; //*/
 
@@ -143,7 +145,7 @@ void construitAutomateExemple(automate* au) {
 	ajouteTransition(au,2,3,'a');
 	ajouteTransition(au,2,4,'b');
 
-	ajouteTransition(au,3,1,'b');
+	ajouteTransition(au,3,3,'b');
 	ajouteTransition(au,3,4,'b');
 
 	ajouteTransition(au,4,4,'a');//*/
@@ -151,29 +153,26 @@ void construitAutomateExemple(automate* au) {
 
 }
 
-void construitAutomateExemple2(automate* au) {
+// Construit l'automate exemple 1 pour le produit d'automate
+void construitAutomateExempleProd1(automate* au) {
 	int i,j,k;
 	int targ;
 	char tran;
 
 	// Tailles générales de l'automates
-	au->size = 4;
+	au->size = 2;
 	au->sizeAlpha = 2;
 
 	// Etats initiaux
 	au->initial = (int*) malloc(au->size*sizeof(int));
-	au->initial[0]=0;
-	au->initial[1]=1;
-	au->initial[2]=1;
-	au->initial[3]=0;
+	au->initial[0]=1;
+	au->initial[1]=0;
 
 
 	// Etats finaux
 	au->final = (int*) malloc(au->size*sizeof(int));
 	au->final[0]=0;
-	au->final[1]=0;
-	au->final[2]=1;
-	au->final[3]=0;
+	au->final[1]=1;
 
 	// Creation/initialisations de transitions vides
 	au->trans = (liste***) malloc(au->size*sizeof(liste***));
@@ -183,36 +182,58 @@ void construitAutomateExemple2(automate* au) {
 			au->trans[i][k]=NULL;
 		}
 	}
+	
+	ajouteTransition(au,0,0,'a');
+	ajouteTransition(au,0,1,'b');
 
-	/*
-	for(i=0;i<au->size;i++) {
-		printf("Etat: %d | ", i);
-		printf("Combien de transitions voulez vous ajouter\n");
-		scanf ("%d",&k);
-		for(j=0; j<k; j++) {
-			printf("\nEtat cible ? (de 0 à %d): ", au->size-1);
-			scanf ("%d",&targ);
-			printf("\nPar transition ? (a, ..., %c /!\\ à la valeur !)", au->sizeAlpha+96);	// 97:a; -1 pour la taille
-			scanf ("%s",&tran);
-			printf("%c\n", tran);
-			ajouteTransition(au,i,targ,tran);
+	ajouteTransition(au,1,1,'a');
+
+
+
+}//*/
+
+// Construit l'automate exemple 2 pour le produit d'automate 
+void construitAutomateExempleProd2(automate* au) {
+	int i,j,k;
+	int targ;
+	char tran;
+
+	// Tailles générales de l'automates
+	au->size = 3;
+	au->sizeAlpha = 2;
+
+	// Etats initiaux
+	au->initial = (int*) malloc(au->size*sizeof(int));
+	au->initial[0]=1;
+	au->initial[1]=0;
+	au->initial[2]=0;
+
+
+	// Etats finaux
+	au->final = (int*) malloc(au->size*sizeof(int));
+	au->final[0]=0;
+	au->final[1]=0;
+	au->final[2]=1;
+
+	// Creation/initialisations de transitions vides
+	au->trans = (liste***) malloc(au->size*sizeof(liste***));
+	for(i=0;i<au->size;i++){
+		au->trans[i]=(liste**) malloc(au->sizeAlpha*sizeof(liste*));
+		for(k=0;k<au->sizeAlpha;k++){
+			au->trans[i][k]=NULL;
 		}
-	}//*/
-	//*
+	}
+	
+	ajouteTransition(au,0,0,'b');
 	ajouteTransition(au,0,1,'a');
-	ajouteTransition(au,0,2,'a');
-	ajouteTransition(au,0,3,'a');
 
+	ajouteTransition(au,1,1,'b');
 	ajouteTransition(au,1,2,'b');
 
-	ajouteTransition(au,2,1,'a');
+	ajouteTransition(au,2,2,'b');
+}//*/
 
-	ajouteTransition(au,3,2,'b');
-
-
-
-}
-
+// Affiche l'automate passé en paramètre
 void afficheAutomate(automate au){
 	int i,j;
 	unsigned char c;
@@ -256,6 +277,7 @@ void afficheAutomate(automate au){
 	
 }
 
+// renvoie le nombre de transition de l'automate mis en paramètre
 int compteTransitions(automate au){
 	int nb=0;
 	int i,j;
@@ -276,6 +298,7 @@ int compteTransitions(automate au){
 	return nb;
 }
 
+// Fonction qui renvoie 1 si l'automate est déterministe, 0 si il ne l'est pas
 int deterministe(automate au) {
 	int i,j;
 	int ref = 1;
@@ -309,6 +332,7 @@ int deterministe(automate au) {
 	return ref;
 }
 
+// Fonction qui renvoie 1 si l'automate mis en paramètre est complet, 0 sinon
 int complet(automate au) {
 	int i,j;
 	int nb =0;
@@ -323,7 +347,7 @@ int complet(automate au) {
 		// On compte les transitions par lettres, si leurs nombres
 		// est different de sizeAlpha, l'automate n'est pas complet
 		if(nb != au.sizeAlpha) {
-			return 1;
+			return 0;
 		}
 		nb = 0;
 	}
@@ -331,6 +355,7 @@ int complet(automate au) {
 	return 1;
 }
 
+// Fonction qui supprime une transition de src vers targ et de lettre alpha
 void supprimeTransition(automate* au, int src, int targ, char alpha) {
 	liste* tmpTrans;
 	liste* lastTmp;
@@ -372,6 +397,7 @@ void supprimeTransition(automate* au, int src, int targ, char alpha) {
 	free(tmpTrans);
 }
 
+// Supprime les transitions de l'état passé en paramètre
 void supprimeTransEtat(automate* au, int state) {
 	if(state >= au->size || state < 0) {
 		printf("L'etat n'existe pas\n");
@@ -391,6 +417,7 @@ void supprimeTransEtat(automate* au, int state) {
 	}
 }
 
+// Fonction qui l'état passé en paramètre (y compris ses transitions)
 void supprimeEtat(automate* au, int state) {
 	int i,j,k;
 	int* tmp;
@@ -471,6 +498,8 @@ void supprimeEtat(automate* au, int state) {
 	}
 }
 
+// Fonction qui supprime tous les états de l'automate passé en paramètre
+// Il supprime l'automate entier
 void supprimeAutomate(automate* au){
 	int i = au->size;
 	automate* tmp;
@@ -492,6 +521,7 @@ void supprimeAutomate(automate* au){
 	
 }
 
+// Fonction qui complete l'automate passé en paramètre
 automate completer(automate au) {
 	liste*** tmp = (liste***) malloc((au.size + 1)*sizeof(liste**));
     int* newinit = (int*) malloc((au.size + 1)*sizeof(int));
@@ -529,7 +559,8 @@ automate completer(automate au) {
     return au;
 }
 
-
+// Fussione deux état de l'automate passé en paramètre. Ces états sont
+// Etat1 et etat2
 void fusionEtats(automate* au, int etat1, int etat2){
 	int i,j;
 	liste* tmpLst;
@@ -590,6 +621,7 @@ void parcour(graphe* au, int p, int** tab){
 	}
 }
 
+// Fonction qui retourne 1 si il existe un chemin de p vers q
 int chemin(graphe* gr,int p, int q){
 	int i;
 	int ** color;
@@ -613,6 +645,7 @@ int chemin(graphe* gr,int p, int q){
 	return res;	
 }
 
+// Fonction qui cree un graphe a partir d'un automate
 void automateToGraphe(automate* au, graphe* gr){
 	int i,j;
 	liste* tmp;
@@ -638,14 +671,14 @@ void automateToGraphe(automate* au, graphe* gr){
 
 }
 
-
-void afficheGraphe(graphe G){
+// Fonction qui affiche le graphe passé en paramètre
+void afficheGraphe(graphe gr){
 	int i;
 	liste* tmp;
 
-	printf("---> Graphe <---\n");
-	for(i=0 ; i<G.nb_summit ; i++){
-		tmp = G.neighbours[i];
+	printf("---> Grraphe <---\n");
+	for(i=0 ; i<gr.nb_summit ; i++){
+		tmp = gr.neighbours[i];
 		printf("%d : ",i);
 
 		while(tmp != NULL){
@@ -658,7 +691,7 @@ void afficheGraphe(graphe G){
 	
 }
 
-
+// Fonction qui supprime le graphe passé en paramètre
 void supprimeGraphe(graphe* gr){
 	int i;
 	liste* tmp_current;
@@ -680,7 +713,8 @@ void supprimeGraphe(graphe* gr){
 	gr = NULL;
 }
 
-
+// Renvoie 1 si le langage de l'automate passé en paramètre est vide.
+// 0 si il ne l'est pas
 int langageVide(automate* au){
 	int i,k;
 	int sum = 0;
@@ -712,7 +746,7 @@ int langageVide(automate* au){
 	}
 }
 
-
+// Fonction qui supprime les états non coaccessible de l'automate passé en param-ètre
 void supprimeNonCoAccessibles(automate* au){
 	int i, k, sum, size;
 	graphe* gr = (graphe*)malloc(sizeof(graphe));
@@ -755,7 +789,7 @@ void supprimeNonCoAccessibles(automate* au){
 
 }
 
-
+// Fonction qui supprime les états non accessible de l'automate passé en param-ètre
 void supprimeNonAccessibles(automate* au){
 	int i, k, sum, size;
 	graphe* gr = (graphe*)malloc(sizeof(graphe));
@@ -798,7 +832,7 @@ void supprimeNonAccessibles(automate* au){
 
 }
 
-
+// Fonction qui fais le produit de l'automate au1 par au2, et le stock dans prod
 void produit(automate* au1, automate* au2, automate* prod){
 	int m,i,j;
 	int taille, currentSizeAlpha;
@@ -890,7 +924,7 @@ void produit(automate* au1, automate* au2, automate* prod){
 }
 
 
-
+// Fonction qui renvoie 1 si l'intersection est vide, et 0 le contraire
 int intersectionVide(automate* au1, automate* au2){
 	automate* tmp = (automate*)malloc(sizeof(automate));
 	int res = 0;
@@ -915,8 +949,9 @@ int main() {
    	int continuer = 1;
    	int continuer2 = 1;
 	automate* au = (automate*) malloc(sizeof(automate));
-	automate* au2 = (automate*) malloc(sizeof(automate));
-	automate* au3 = (automate*) malloc(sizeof(automate));
+	automate* auProd = (automate*) malloc(sizeof(automate));
+	automate* auProd1 = (automate*) malloc(sizeof(automate));
+	automate* auProdResult = (automate*) malloc(sizeof(automate));
     int choix = 0;
     int size, sizeAlpha;
     int i, k, j;
@@ -988,7 +1023,7 @@ int main() {
     	int selection1, selection2;
     	char trans;
     	while(continuer2) {
-    		printf("\n>1. Afficher l'automate\n>2. Completer l'automate\n>3. L'automate est-il complet ?\n>4. L'automate est-il deterministe?\n>5. Supprimer un etat de l'automate\n>6. Fusionner 2 etats de l'automate\n>7. Supprimer une transition de l'automate\n>8. Ajouter une transition a l'automate\n>9. Creer graphe et l\'afficher\n>10. Langage Vide ? \n>11. Supression etat non coaccessible\n>12. Supression etat non accessible\n>13. Creation et produit de deux automates\n>14. Intersection des deux langages vides ?\n>15. Arreter programme\n> Choix : ");
+    		printf("\n>1. Afficher l'automate\n>2. Completer l'automate\n>3. L'automate est-il complet ?\n>4. L'automate est-il deterministe?\n>5. Supprimer un etat de l'automate\n>6. Fusionner 2 etats de l'automate\n>7. Supprimer une transition de l'automate\n>8. Ajouter une transition a l'automate\n>9. Creer graphe et l\'afficher\n>10. Langage Vide ? \n>11. Supression etat non coaccessible\n>12. Supression etat non accessible\n>13. Creation et produit de deux automates\n>14. Intersection des deux langages vides ?\n>15 compteTransitions.\n>16. Arreter programme\n> Choix : ");
 			scanf("%i", &choix);
 
 			switch(choix) {
@@ -1017,7 +1052,6 @@ int main() {
                     supprimeEtat(au,selection1);
                     break;
                 case 6:
-                	printf("Fonction bug, segmentation error\n");
                 	printf("\nEntrer le numero du premier etat : ");
                     scanf("%i",&selection1);
                     printf("\nEntrer le numero du second etat : ");
@@ -1066,20 +1100,29 @@ int main() {
                		supprimeNonAccessibles(au);
                		break;
                	case 13:
-               		printf("Creation et affichage du produit de deux automate\n");
-               		construitAutomateExemple2(au2);
-               		afficheAutomate(*au2);
-               		produit(au,au2,au3);
-               		afficheAutomate(*au3);
+               		printf("Creation et affichage du produit de deux automate (Utilisation des automates exemples)\n");
+               		construitAutomateExempleProd1(auProd);
+               		construitAutomateExempleProd2(auProd1);
+               		printf("Automate exemple 1\n");
+               		afficheAutomate(*auProd);
+               		printf("Automate exemple 2\n");
+               		afficheAutomate(*auProd1);
+               		produit(auProd,auProd1,auProdResult);
+               		printf("Automate produit\n");
+               		afficheAutomate(*auProdResult);
                		break;
                	case 14:
-               		printf("Creation et affichage du produit de deux automate\n");
-               		construitAutomateExemple2(au2);
-               		afficheAutomate(*au2);
+               		printf("Test si l'Intersection des automates est vide. (utilisation des automates exemples)\n");
+               		construitAutomateExempleProd1(auProd);
+               		construitAutomateExempleProd2(auProd1);;
                		printf("intersectionVide ?\n");
-               		if(intersectionVide(au,au2));
+               		if(intersectionVide(auProd,auProd1));
                		break;
-                case 15:
+               	case 15:
+               		printf("Compte Transitions\n");
+               		printf("Il y a %i transition(s)\n",compteTransitions(*au));
+               		break;
+                case 16:
                 	continuer = 0;
                 	continuer2 = 0;
                 	break;
