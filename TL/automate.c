@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// PB AVEC LES STRUCTURES DE LISTES A RESOUDRE
 
 typedef struct s_liste {
         int state;	// Nom de l'etat
