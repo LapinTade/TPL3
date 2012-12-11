@@ -1,0 +1,216 @@
+ROZE
+Nicolas
+TP1A1
+
+Compte rendu ABD
+
+
+1 Prise en main de l'environnement
+    1.1 Mise en place d'un serveur PostgreSQL
+        1.1.1 Variable d'environnement
+        
+        
+            $> export PGSQL_DIR=/tmp/pgsql
+            $> export PGSQL_PORT=5000
+            $> export PATH=/opt/abd/bin/:$PATH
+            $> export LD_LIBRARY_PATH=/opt/abd/lib:$PATH
+            
+            
+        1.1.2 Configuration d'une base
+        
+        
+            $> initdb -D $PGSQL_DIR/data
+            
+            
+            La commande précédante permet d'initialiser l'ensemble des bases de
+                données par l'instance de serveur
+                
+            L'option "-D repertoire" Permet de mentionner le repertoire de
+                stockage des bases de données.
+                
+        1.1.3 Lancement du serveur
+        
+        
+            $> postgres -D $PGSQL_DIR/data -p $PGSQL_PORT > $PGSQL_DIR/logfile 2>&1 &
+            
+            
+            La commande "postgres" permet de lancer une instance de serveur PostgreSQL
+            
+            L'option "-D datadir" définit le repertoire ou se situe les données
+                (bases de données) nécéssaire au fonctionnement des postgres
+                
+            L'option "-p port" Spécifie le numéro de port TCP/IP que l'instance PostgreSQL
+                utilisera
+                
+            "> $PGSQL_DIR/logfile" permet de rediriger les sortie de la commande
+                dans le fichier logfile. On aura ainsi une trace de l'activité
+                de l'instance PostgreSQL.
+                
+            "2>&1" La sortie d'erreur de l'application sera aussi redirigée dans
+                le fichier logfile.
+                
+            "&" Lance la commande en tache de fond, laissant le terminal libre
+                d'utilisation
+        
+        1.1.4 Arrêt du serveur
+        
+        
+            $> pg_ctl stop -D $PGSQL_DIR/data
+            
+            
+            La commande "pg_ctl" permet de démarrer ou arreter un serveur PostgreSQL
+                en spécifiant "start" ou "stop"
+                
+            Comme toute les autres commandes citées avant l'option "-D datadir"
+                définit le répertoire où se situe les données utilisée par l'instance
+                du serveur.
+                
+    1.2 PostgreSQL en mode interractif
+        1.2.1 Connexion au serveur PostgreSQL
+        
+        
+            $> psql -h /tmp -p $PGSQL_PORT postgres
+            
+            
+            "psql" permet d'acceder a l'instance de PostgreSQL en ligne de commandes
+                son utilisation se fait de façon similaire à MySQL.
+            
+            L'option "-p port" spécifie le port avec lequel on se connecte sur le serveur.
+            
+            A la connexion on utilise la base postgrse.
+            
+        1.2.2 Commandes générales
+        
+        
+            postgres=# CREATE DATABASE temp;
+            CREATE DATABASE
+
+            La commande vient de creer la base de données "temp"
+            
+            
+            
+            postgres=# SELECT datname FROM pg_database;
+              datname  
+            -----------
+             template1
+             template0
+             postgres
+             temp
+            (4 rows)
+            
+            La commande affiche les données "datname" de la base "pg_database",
+                on peut lancer de cette façon du code SQL directement.
+            
+            
+            postgres=# \l
+                Name    | Owner | Encoding |   Collate   |    Ctype    | Access privileges 
+            -----------+-------+----------+-------------+-------------+-------------------
+             postgres  | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | 
+             temp      | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | 
+             template0 | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | =c/nroze         +
+                       |       |          |             |             | nroze=CTc/nroze
+             template1 | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | =c/nroze         +
+                       |       |          |             |             | nroze=CTc/nroze
+            (4 rows)
+
+            La commande "\l" affiche les tables présente sur le serveur PostgreSQL.
+                On peut y voir notement la table "temp" créée précédement.
+                On obtient aussi des informations tel que l'encode des caractère
+                    utilisée dans la table, les droits/privilèges d'accès, le
+                    propriétaire
+                    
+                    
+            postgres=# \c temp
+            You are now connected to database "temp" as user "nroze".
+            
+            La commande "\c" permet d'utiliser la table temp pour les futures
+                requêtes SQL. Cette commande est l'équivalent de "use" sur MySQL.
+                
+                
+            postgres=# \q
+            $>
+            
+            La commande "\q" permet de quitter le mode terminal et de se
+                déconnecter du serveur PostgreSQL.
+                
+                
+        1.2.3 Utilisation de fichiers en mode Batch
+        
+        
+            psql -h /tmp -p $PGSQL_PORT postgres < batch.sql > pgsql.out
+            
+            
+            "< batch.sql" permet de "faire entrer" le contenu de batch.sql dans
+                la commande. L'instace ainsi lancée va lire dans ce fichier et
+                executer le contenu.
+                
+            "> pgsql.out" Le résultat de la commande sera redirigé dans le fichier
+                pgsql.out. Un "cat pgsql.out" permet de lire son contenu.
+                
+                
+            $> cat pgsql.out 
+              datname  
+            -----------
+             template1
+             template0
+             postgres
+             temp
+            (4 rows)
+
+                                          List of databases
+               Name    | Owner | Encoding |   Collate   |    Ctype    | Access privileges 
+            -----------+-------+----------+-------------+-------------+-------------------
+             postgres  | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | 
+             temp      | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | 
+             template0 | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | =c/nroze         +
+                       |       |          |             |             | nroze=CTc/nroze
+             template1 | nroze | UTF8     | fr_FR.UTF-8 | fr_FR.UTF-8 | =c/nroze         +
+                       |       |          |             |             | nroze=CTc/nroze
+            (4 rows)
+
+            You are now connected to database "temp" as user "nroze".
+            
+            On voit que le contenu de pgsql.out est similaire aux résultats des
+                commandes lancées en mode interractifs.
+                         
+    1.3 Prise en main de PgAdmin3
+        
+        Après avoir cliqué sur l'icône "prise/connection" on renseigne un nom
+            (name) pour la connexion, le port à utiliser, un Username (celui de 
+            notre session Unix).
+        
+        Nous avons a présent accès à l'architecture de la base de données. Dans
+            l'arbre du panneau gauche on obtient l'arborescence suivante:
+                
+                -Server Groups
+                    -Servers
+                        -Connexion PostgreSQL (le name de la connexion)
+                            -Databases(2)
+                                +postgres
+                                +temp
+                            -Tablespaces(2)
+                                pg_default
+                                pg_global
+                            Group Roles(0)
+                            -Login Roles(1)
+                                nroze (le login Unix)
+        
+        -Servers regroupe les connexions connues par PgAdmin3.
+        -Databases contient les bases de données.
+        -Tablespaces contient les tablespaces présent dans le serveur.
+        -Group Roles contient les groupes utilisateurs.
+        -Login Roles contient les logins ayant accès au serveur.
+                              
+        On peut appercevoir la table temp créé précédement.
+        Lorsque l'on déroule temp on obtient l'arbre suivant:
+            -temp
+                +Catalogs(2)
+                +Extentions(1)
+                +Schemas(1)
+                Slony Replication(0)
+                
+    !!!!! TODO !!!!!!
+    
+    
+        Pour executer des requêtes sql on selectionne la database où l'on veut
+            les executer et l'on clique sur l'icone "loupe/execute SQL".
