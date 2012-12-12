@@ -342,7 +342,7 @@ Compte rendu ABD
         4. Garantir que la rue est inexistante si le code postal et la ville ne sont pas saisis.
             > ALTER TABLE Etudiant ADD CHECK ((ville IS NULL AND cp IS NULL AND rue is NULL) OR (ville IS NOT NULL OR cp IS NOT NULL)) ;
 
-            Succes: INSERT INTO Etudiant VALUES (888, 'Beta', 'Alpha', '1950-06-06', NULL, NULL, NULL);
+            Succes: INSERT INTO Etudiant VALUES (888, 'Beta', 'Alpha', '1997-06-06', NULL, NULL, NULL);
             Fail:   INSERT INTO Etudiant VALUES (999,'Truc','Much','1996-04-03','Rue de Chose',NULL,NULL) ;
             Message:
                 "ERROR: new row for relation "etudiant" violates check constraint "etudiant_check"
@@ -350,13 +350,88 @@ Compte rendu ABD
                 Detail: Failing row contains (999, Truc, Much, 1996-04-03, Rue de Chose, null, null)."
 
         5. Bien que chaque étudiant puisse concourir, aucune note ne peut être saisie pour les étudiants mineurs.
-            >
+            > "CREATE OR REPLACE FUNCTION no_note_min() RETURNS TRIGGER AS $$
+                BEGIN
+                    IF((SELECT datenaiss from Etudiant WHERE numetu = NEW.numetu) > '1994-12-12') THEN
+                    DELETE FROM Notation WHERE numetu = NEW.numetu;
+                    END IF;
+                    RETURN NEW;
+                END
+                $$ language plpgsql;
 
-            Succes:
-            Fail:
-            Message:
-                ""
 
+                -- DROP TRIGGER date ON Notation;
+
+                CREATE TRIGGER date
+                AFTER INSERT OR UPDATE ON Notation
+                FOR EACH ROW
+                EXECUTE PROCEDURE no_note_min();
+                "
+
+            Succes: INSERT INTO Notation VALUES(555, 11031, 20);
+            "Fail": INSERT INTO Notation VALUES(888, 11031, 10);
+            Effect: La note pour l'étudiant 888 est supprimée de la base de donnée
+                Car il ne peut pas avoir de note
+
+        6. Aucune salle n’est utilisée plusieurs fois le même jour.
+            > "CREATE OR REPLACE FUNCTION no_salle_same_day() RETURNS TRIGGER AS $$
+            BEGIN
+                IF ((Select COUNT(lieu) FROM Epreuve GROUP BY datepreuve,lieu HAVING COUNT(lieu)> 1) IS NOT NULL) THEN
+                    DELETE FROM Epreuve WHERE numepreuve = NEW.numepreuve;
+                END IF;
+                RETURN NEW;
+            END
+            $$ language plpgsql;
+
+            DROP TRIGGER no_salle ON Epreuve;
+
+            CREATE TRIGGER no_salle
+            AFTER INSERT OR UPDATE  ON Epreuve
+            FOR EACH ROW
+            EXECUTE PROCEDURE no_salle_same_day();"
+
+            Succes: INSERT INTO Epreuve VALUES (31032,'2004-12-15','Salle 191L','INF');
+            "Fail": INSERT INTO Epreuve VALUES (31031,'2003-12-15','Salle NEW','INF') (meme salle et date que la premiere);
+            Effect: L'epreuve 31031 est supprimée
+
+        7. Il n’existe qu’une seule épreuve pour une matière donnée par année.
+            >"CREATE OR REPLACE FUNCTION mat() RETURNS TRIGGER AS $$
+            BEGIN
+                IF ((SELECT COUNT(extract(year from datepreuve)) AS jean FROM Epreuve GROUP BY codemat,extract(year from datepreuve) HAVING COUNT(extract(year from datepreuve)) > 1) IS NOT NULL) THEN
+                    DELETE FROM Epreuve WHERE numepreuve = NEW.numepreuve ;
+                END IF ;
+                RETURN NEW ;
+            END
+            $$ language plpgsql ;
+
+            DROP TRIGGER IF EXISTS mat ON Epreuve ;
+
+            CREATE TRIGGER mat
+            AFTER INSERT OR UPDATE  ON Epreuve
+            FOR EACH ROW
+            EXECUTE PROCEDURE mat() ;"
+
+            Succes: INSERT INTO Epreuve VALUES (31033,'2008-05-03','Salle 2','ECO') (examen ECO mais en 2008, donc pas la meme année)
+            "Fail":  INSERT INTO Epreuve VALUES (31033,'2004-05-03','Salle 2','ECO') (Il y a deja une epreuve ECO a l'annee 2004)
+            Effect: Si le fail est executé en premier, elle sera supprimée.
+
+        8. Lorsque la date d’une épreuve est modifiée (en cas d’annulation d’épreuve), les notes correspon-dantes doivent être supprimées.
+            > "CREATE OR REPLACE FUNCTION datemod() RETURNS TRIGGER AS $$
+            BEGIN
+                DELETE FROM Notation WHERE numepreuve = NEW.numepreuve ;
+                RETURN NEW ;
+            END
+            $$ language plpgsql ;
+
+            DROP TRIGGER IF EXISTS datemodi ON Epreuve ;
+
+            CREATE TRIGGER datemodi
+            AFTER UPDATE OF datepreuve ON Epreuve
+            FOR EACH ROW
+            EXECUTE PROCEDURE datemod() ;"
+
+            Requete declanchant le trigger: Update Epreuve SET datepreuve = '1993-9-3' WHERE numepreuve = 31030;
+            Effect: L'epreuve sera supprimée
 
 
 3 Gestion de spectacle
@@ -426,3 +501,32 @@ Compte rendu ABD
             Afin de rendre possible cette requete il a fallu se creer un
             concert et une salle à place limitée, afin de pouvoir inserer
             un nombre de vente limité.
+
+    3.4 Integrité des données
+        1. Limiter les valeurs des prix aux valeurs positives.
+            >ALTER TABLE Billet ADD CHECK(prix > 0);
+        2. Il n’y a pas plus de spectateurs à un concert donné que de place dans la salle.
+            >CREATE OR REPLACE FUNCTION salle() RETURNS TRIGGER AS $$
+            BEGIN
+                IF ((Select b.Concert_ID
+                    FROM Vente v, Billet b, Concert c, Salle s, Spectacle sp
+                    WHERE v.Billet_ID=b.Billet_ID
+                    AND b.Concert_ID=c.Concert_ID
+                    AND c.Spectacle_ID=sp.Spectacle_ID
+                    AND sp.Salle_ID=s.Salle_ID
+                    GROUP BY b.Concert_ID, s.Capacite
+                    HAVING COUNT(v.Billet_ID)> s.Capacite) IS NOT NULL) THEN
+                                            DELETE FROM Billet WHERE Billet_ID = NEW.Billet_ID ;
+                END IF ;    
+                RETURN NEW ;
+            END
+            $$ language plpgsql ;
+
+            --DROP IF EXISTS TRIGGER dateF ON Billet ;
+
+            CREATE TRIGGER dateF
+            AFTER INSERT OR UPDATE  ON Billet
+            FOR EACH ROW
+            EXECUTE PROCEDURE salle() ;
+            INSERT INTO Billet VALUES (20, 1, 21, 'C', 23);
+            SELECT * FROM Billet;
