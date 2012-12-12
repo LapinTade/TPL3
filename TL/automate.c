@@ -20,6 +20,19 @@ typedef struct {
 	liste** neighbours;
 } graphe;
 
+typedef struct s_iliste {
+         int* val;
+         int tailleVal;
+         int state;
+         struct s_iliste* nxt;
+} iliste;
+
+typedef struct {
+         iliste* debut;
+         iliste* fin;
+} ifile;
+
+
 // Fonction qui ajouter un element à une liste
 void ajouteListe(liste** l,int q){
 	liste* ptl;
@@ -521,41 +534,39 @@ void supprimeAutomate(automate* au){
 }
 
 // Fonction qui complete l'automate passé en paramètre
-automate completer(automate au) {
-	liste*** tmp = (liste***) malloc((au.size + 1)*sizeof(liste**));
-    int* newinit = (int*) malloc((au.size + 1)*sizeof(int));
-    int* newfinal = (int*) malloc((au.size + 1)*sizeof(int));
+void completer(automate* au) {
+	liste*** tmp = (liste***) malloc((au->size + 1)*sizeof(liste**));
+    int* newinit = (int*) malloc((au->size + 1)*sizeof(int));
+    int* newfinal = (int*) malloc((au->size + 1)*sizeof(int));
 
-    int i,j,db = au.size;
+    int i,j,db = au->size;
 
-    for(i=0;i<au.size;i++) {
-        tmp[i] = au.trans[i];
-        newinit[i] = au.initial[i];
-        newfinal[i] = au.final[i];
+    for(i=0;i<au->size;i++) {
+        tmp[i] = au->trans[i];
+        newinit[i] = au->initial[i];
+        newfinal[i] = au->final[i];
     }
 
-    tmp[db] =(liste**) malloc(au.sizeAlpha*sizeof(liste*));
+    tmp[db] =(liste**) malloc(au->sizeAlpha*sizeof(liste*));
 
-    for(j=0;j<au.sizeAlpha;j++) {
+    for(j=0;j<au->sizeAlpha;j++) {
         tmp[db][j] = NULL;
     }
     newinit[db] = 0;
     newfinal[db] = 0;
 
-    au.size = db + 1;
-    au.trans = tmp;
-    au.initial = newinit;
-    au.final = newfinal;
+    au->size = db + 1;
+    au->trans = tmp;
+    au->initial = newinit;
+    au->final = newfinal;
 
-    for(i=0;i<au.size;i++) {
-        for(j=0;j<au.sizeAlpha;j++) {
-            if(au.trans[i][j] == NULL) {
-                ajouteTransition(&au,i,db,(char) j + 'a');
+    for(i=0;i<au->size;i++) {
+        for(j=0;j<au->sizeAlpha;j++) {
+            if(au->trans[i][j] == NULL) {
+                ajouteTransition(au,i,db,(char) j + 'a');
             }
         }
     }
-
-    return au;
 }
 
 // Fussione deux état de l'automate passé en paramètre. Ces états sont
@@ -942,6 +953,429 @@ int intersectionVide(automate* au1, automate* au2){
 	
 }
 
+// Fonction qui permet de déterminiser un automate passé en paramètre
+void determinise(automate** ap){
+	automate* au = *ap;
+	if(deterministe(*au) == 1){
+		return;
+	}
+		
+	int i=0;
+	int j=0;
+	int init;
+	init = -1;
+	liste* tmp;
+	iliste* tmpFile;
+	int n = 0;
+	int* pt = (int*) malloc (sizeof(int));
+	int k, estDansTab;
+	automate* D = (automate*) malloc (sizeof(automate));
+
+
+	ifile* file = (ifile*) malloc (sizeof(ifile));
+	file->debut = NULL;
+	file->fin = NULL;
+
+	//ajout du premier etat
+	while(init == -1 && i<au->size){
+		if(au->initial[i] == 1){
+			init = i;
+		}
+		i++;
+	} 
+	pt[0] = init;
+	ajouteFile(file, pt, 1);
+
+
+	// création et remplissage de la file avec les nouveaux états
+	tmpFile = file->debut;
+	while(tmpFile != NULL){
+		for(j=0; j<au->sizeAlpha; j++){
+			pt = (int*) realloc(pt,0*sizeof(int));
+			n = 0;
+			estDansTab = 0;
+			for(i=0; i<tmpFile->tailleVal; i++){
+				tmp = au->trans[tmpFile->val[i]][j]; 
+				while(tmp != NULL){
+					for(k=0; k<n; k++){
+						if(tmp->state == pt[k]){
+							estDansTab = 1;
+						}
+					}
+					if(estDansTab == 0){
+						n++;
+						pt = (int*) realloc(pt,n*sizeof(int));
+						pt[n-1] = tmp->state;
+						tmp = tmp->nxt;
+					}
+				}
+				
+			}
+			if(estDansFile(*file,pt,n) == 0){
+				ajouteFile(file,pt,n);
+			}
+		}
+
+		tmpFile = tmpFile->nxt;
+	}
+
+	// Creation de l'automate
+	D->size = file->fin->state + 1;
+	D->sizeAlpha = au->sizeAlpha;
+
+	
+	D->initial=(int*) malloc(D->size*sizeof(int));
+
+	for(i=0; i<D->size; i++){
+		if(i != 0){
+			D->initial[i] = 0;
+		}else{
+			D->initial[i] = 1;
+		}
+	}
+
+	D->final=(int*) malloc(D->size*sizeof(int));
+	tmpFile = file->debut;
+
+	while(tmpFile != NULL){
+		for(i=0; i<tmpFile->tailleVal; i++){
+			if(au->final[tmpFile->val[i]] == 1){
+				D->final[tmpFile->state] = 1;
+			}else{
+				D->final[tmpFile->state] = 0;
+			}
+		}
+		tmpFile = tmpFile->nxt;	
+	
+	}
+	
+	D->trans=(liste***) malloc(D->size*sizeof(liste**));
+	for(i=0;i<D->size;i++){
+		D->trans[i]=(liste**) malloc(D->sizeAlpha*sizeof(liste*));
+		for(j=0;j<D->sizeAlpha;j++){
+			D->trans[i][j]=NULL;
+		}
+	}
+
+
+
+// ajout des transitions en se servant de la fonction numEtatDansFile
+// qui retourne le numéro dans le nouvel automate d'un ensemble d'état
+
+	tmpFile = file->debut;
+	while(tmpFile != NULL){
+		for(j=0; j<au->sizeAlpha; j++){
+			pt = (int*) realloc(pt,0*sizeof(int));
+			n = 0;
+			estDansTab = 0;
+			for(i=0; i<tmpFile->tailleVal; i++){
+				tmp = au->trans[tmpFile->val[i]][j];
+				while(tmp != NULL){
+					for(k=0; k<n; k++){
+						if(tmp->state == pt[k]){
+							estDansTab = 1;
+						}
+					}
+					if(estDansTab == 0){
+						n++;
+						pt = (int*) realloc(pt,n*sizeof(int));
+						pt[n-1] = tmp->state;
+						tmp = tmp->nxt;
+					}
+				}
+				
+			}
+
+			if((init = numEtatDansFile(*file, pt, n)) != -1){
+				ajouteTransition(D,tmpFile->state,init,(char)('a' + j));
+			}
+		}
+
+		tmpFile = tmpFile->nxt;
+	}
+
+	
+	free(pt);
+	libereFile(file);
+
+	*ap = D;
+
+	supprimeAutomate(au);
+}
+
+
+/* Fonction qui copie un automate dans un autre 
+utile pour tester l'inclusion*/
+void copieAutomate(automate orig, automate* copy){
+
+	int i,j;
+	liste* tmp = NULL;
+	
+	copy->size = orig.size;
+	copy->sizeAlpha = orig.sizeAlpha;	
+
+	copy->initial = (int*) malloc(copy->size*sizeof(int));
+	copy->final = (int*) malloc(copy->size*sizeof(int));
+
+	
+	for(i=0; i<copy->size; i++){
+		copy->initial[i] = orig.initial[i];
+		copy->final[i] = orig.final[i];
+	}
+
+	
+	copy->trans=(liste***) malloc(copy->size*sizeof(liste**));
+	for(i=0;i<copy->size;i++){
+		copy->trans[i]=(liste**) malloc(copy->sizeAlpha*sizeof(liste*));
+		for(j=0;j<copy->sizeAlpha;j++){
+			tmp = orig.trans[i][j];
+			copy->trans[i][j] = NULL;
+			while(tmp != NULL){
+				ajouteTransition(copy,i,tmp->state,(char)('a' + j));
+				tmp = tmp->nxt;
+			}
+		}
+	}
+}
+
+
+/* Fonction qui calcule l'automate complémentaire
+de l'automate passé en premier paramètre
+dans celui passé en deuxième paramètre */
+void complementaire(automate* au, automate** comp){
+	int i;
+	copieAutomate(*au, *comp);
+
+	
+	determinise(comp);
+
+	if (complet(**comp) == 0){
+		completer(*comp);
+	}
+
+// inversion des états finaux et non finaux
+
+	for(i=0; i<(*comp)->size; i++){
+		if((*comp)->final[i] == 0){
+			(*comp)->final[i] = 1;
+		}else{
+			(*comp)->final[i] = 0;
+		}
+	}
+			
+	afficheAutomate(**comp);
+
+}
+
+/* Fonction qui permet de savoir si le premier 
+automate est inclut dans le second 1 si oui 0 sinon*/
+/* Le principe d'inclusion réside dans le fait que
+l'inclusion de au dans B correspond au fait que l'intersection
+de au avec le complémentaire de B est vide */
+int inclusion(automate** au, automate* B){
+	int res = 0;
+	automate* compB = (automate*)malloc(sizeof(automate));
+
+	determinise(au);
+
+	complementaire(B, &compB);
+
+	res = intersectionVide(*au,compB);
+
+	supprimeAutomate(compB);
+
+	return res;
+}
+
+
+/* Fonction qui détermine si deux états sont
+équivalents par l'équivalence de Nérode 
+1 si oui 0 sinon*/
+int nerodeEquivalent(automate* au, int e1, int e2){
+	int j=0;
+
+	if(au->final[e1] != au->final[e2]){
+		return 0;
+	}
+
+// si une transition est différente alors ils ne sont pas équivalent
+	while(j<au->sizeAlpha){
+		if(au->final[(au->trans[e1][j])->state] != au->final[(au->trans[e2][j])->state] ){
+			return 0;
+		}
+		j++;
+	}
+	
+// sinon il le son
+	return 1;
+}
+
+
+/* Fonction qui minimise un automate en fusionnant 
+les états qui sont nérode-équivalent */
+void minimiseNerode(automate** au){
+	int i = 0;
+	int j = 0;
+	
+	if(deterministe(**au) == 0){
+		determinise(au);
+	}
+
+	if(complet(**au) == 0){
+		completer(*au);
+	}
+
+// pour tous les états ont teste si il sont deux à deux 
+// équivalent, si c'est le cas, on les fusionne
+	while(i<(*au)->size){
+		j = i + 1;
+		while(j<(*au)->size){
+			if(nerodeEquivalent(*au,i,j)){
+				fusionEtats(*au,i,j);
+			}else{
+				j++;
+			}
+		}
+	i++;
+	}
+}
+
+/* Fonction qui minimise un automate en se servant
+de la méthode de Hopcroft (vue en TD) */
+void minimiseHopcroft(automate** au){
+
+	if(deterministe(**au) == 0){
+		determinise(au);
+	}
+
+	if(complet(**au) == 0){
+		completer(*au);
+	}
+
+	automate* T = *au;
+	int i,j,k,l;
+	int numClasse = 1;
+	int dif = 0;
+	int equiv = 0;
+	int tailleClasse;
+	int cpt = 0;
+	tailleClasse = T->sizeAlpha + 2;
+
+
+// on stock les classes d'équivalence dans la matrice classe
+// la première ligne est l'équivalence courante et la dernière 
+// ligne correspond à la prochaine équivalence
+// les lignes entre correspondent aux états d'arrivé par la transition
+// avec la lettre d'indice de ligne - 1
+// depuis l'état d'indice de colonne
+
+	int** class;
+	class = (int**) malloc (tailleClasse*sizeof(int*));
+
+	for(i=0; i<tailleClasse; i++){
+		class[i] = (int*) malloc(T->size * sizeof(int));
+		for(j=0; j<T->size; j++){
+			if(i==0){
+				class[i][j] = T->final[j];
+			}else{
+				class[i][j] = -1;
+			}
+		}
+	} 
+	
+
+// tant que la première et la dernière ligne ne sont pas égales
+	while(equiv != 1){
+		numClasse = 1;
+		for(i=0; i<T->size; i++){
+			for(j=1; j<tailleClasse - 1; j++){
+				class[j][i] = class[0][(T->trans[i][j-1])->state];
+			}
+
+			if(i==0){
+				class[tailleClasse-1][i] = 0;
+			}else{
+				for(k=0; k<i; k++){
+					dif = 0;
+					for(l=0; l<tailleClasse -1; l++){
+						if(class[l][k] != class[l][i]){
+							dif = 1;
+						}
+					}
+
+					if(dif != 0){
+						class[tailleClasse-1][i] = numClasse;
+						numClasse ++;
+					}else{
+						class[tailleClasse-1][i] = class[tailleClasse-1][k];
+					}
+				}
+			}
+		}
+	
+
+	// on test l'égalité des deux lignes
+		equiv = 1;
+		for(i=0; i<T->size; i++){
+			if(class[0][i] != class[tailleClasse-1][i]){
+				equiv = 0;
+			}
+		}
+	// on met la dernière ligne dans la première pour le prochain tour
+		for(i=0; i<T->size; i++){
+			class[0][i] = class[tailleClasse-1][i];
+		}
+		
+		cpt++;
+			
+	}
+
+	if(cpt>2){//on construit le nouvel automate car cela veut dire que l'automate n'était pas minimal
+		cpt = 0;
+		for(i=0; i<T->size; i++){
+			if(class[0][i] >= cpt){
+				cpt++;
+			}
+		}
+
+		
+		automate* new = (automate*) malloc(sizeof(automate));
+		new->size = cpt;
+		new->sizeAlpha = tailleClasse -2;
+		new->initial = (int*) malloc(new->size*sizeof(automate));
+		new->final = (int*) malloc(new->size*sizeof(automate));
+
+		for(i=0; i<T->size; i++){
+				new->initial[class[0][i]] = T->initial[i];
+				new->final[class[0][i]] = T->final[i];
+		}
+
+		new->trans=(liste***) malloc(new->size*sizeof(liste**));
+		for(i=0;i<new->size;i++){
+			new->trans[i]=(liste**) malloc(new->sizeAlpha*sizeof(liste*));
+			for(j=0;j<new->sizeAlpha;j++){
+				new->trans[i][j]=NULL;
+			}
+		}
+
+		
+		for(i=0; i<T->size; i++){
+			for(j=1; j<tailleClasse - 1; j++){
+				ajouteTransition(new, class[0][i], class[j][i], (char)('a' + (j-1)));
+			}
+		}
+		
+
+		*au = new;
+		supprimeAutomate(T);
+	}
+
+	for(i=0; i<tailleClasse; i++){
+		free(class[i]);
+	}
+	free(class);
+
+}
 
 
 int main() {
@@ -1031,7 +1465,7 @@ int main() {
 					break;
 				case 2:
 					printf("Completition:\n");
-					*au = completer(*au);
+					completer(au);
 					break;
 				case 3:
 					if(complet(*au))
