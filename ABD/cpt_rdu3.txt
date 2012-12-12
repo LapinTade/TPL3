@@ -209,8 +209,220 @@ Compte rendu ABD
                 +Schemas(1)
                 Slony Replication(0)
                 
-    !!!!! TODO !!!!!!
+        - Catalogs: Contient tout les schemas créés par pgadmin.
+        - Extensions: Contient  les fonctions de pgadmin.
+        - Schemas: Contient les schemas créé par l'utilisateur. On trouve
+            Plus bas de cette arborescence la présence de nos tables, les fonctions etc...
+        - Slony: Contient tous les modules slony.
+
+        Dans le panneau du milieu on trouve les onglets: Properties,
+        Statistics, Dependencies, Dependents. Ces onglets donneront des
+        informations sur les éléments des branches selectionnées.
+
+        - Properties: Retourne les propriété de la selection.
+        - Statistics: Retourne les statistiques (taille, etc...).
+        - Dependencies: Retourne les dépendences lié à la selection.
+        - Dependent: Retourne les éléements du quel la sélection dépend.
     
     
         Pour executer des requêtes sql on selectionne la database où l'on veut
             les executer et l'on clique sur l'icone "loupe/execute SQL".
+
+        Une fenetre s'affiche contenant deux panneaux:
+            - Un panneau à deux onglets SQL Editor et Graphical Query Builder.
+                - SQL Editor: Permet d'écrire ses requetes SQL.
+                - Graphical Query Builder: Permet de creer des requetes SQL facilement en mode graphique. On Sélectionne Les tables voulues et les données voulues ainsi que les contraintes.
+            - Un panneau à quatre onglets: Data Output, Explain, Messages, History.
+                - Data Output: On trouve ici les résultats des requetes SQL
+                - Explain: Renvoie les explications des requetes de pgadmin
+                - Messages: Tous les messages de pgadmin sont ici. On y trouve les messages d'erreurs par exemple:
+                    "ERROR:  relation "tesetetu" does not exist
+                    LINE 1: SELECT * FROM tesetEtu;"
+                - History: Ici, se trouve toutes les dernières requetes
+                envoyée au serveur, y compris les requètes qui ne
+                fonctionnent pas.
+
+        Pour creer une requete graphique:
+            Cliquer sur l'onglet Graphical Query Builder. (RQ: Il faut
+                redémarrer la fenetre requete SQL si l'on a ajouté une table
+                afin de mettre à jours les données graphique [présence des
+                tables par exemple]).
+            SELECTionner dans l'arbre de gauche la table voulue: <nom table>/schemas/publics/<table voulue>. On peux cocher les données que 
+            l'on veux.
+            Si l'on a des clés étrangères on click n' drag entre les deux valeurs des deux tables pour créer un lien.
+            Une fois que l'on clique sur la fleche verte pour lancer la
+                requète, il nous ouvre l'onglet SQL Editor qui contient le
+                code SQL de notre requete graphique.
+
+                "SELECT 
+                  etudiant.numetu, 
+                  notation.note, 
+                  etudiant.nom, 
+                  etudiant.prenom
+                FROM 
+                  public.etudiant, 
+                  public.notation
+                WHERE 
+                  etudiant.numetu = notation.numetu;"
+            Dans l'onglet graphique le bas du bas permet de faire des
+                opérations sur la requete. Il contient: Columns, Criteria,
+                Ordering, Joins.
+            - Columns: contient Les collones des tables selectionnés.
+            - Criteria: Permet de mettre des conditions dans les requetes
+                (les WHERE en SQL) exemple: 
+                Restricted value: notation.note
+                Operator: =
+                Value: 20
+                Connector: AND (On peux choisir soit AND ou OR, qui permet d'ibriquer les conditions dans le WHERE)
+                    => Code ajouté:
+                        "AND
+                        notation.note = 20;"
+            - Ordering: Permet de donner un ordre a notre selection:
+                On y trouve les 'available columns' contenant les colonnes
+                    qui ne sont pas encore rangées.
+                Et à droite les colonnes que l'on veut ranger.
+                Pour cela on selection la/les ligne(s) à ranger et l'on
+                    clique sur l'une des flches vertes (de gauche à droite)
+                    ce qui a pour effet de faire changer la ligne de colonne
+                On peux maintenant choisir pour la/les ligne(s) placée(s) à
+                    droite l'ordre: ASC ou DESC.
+                    On obtient par exemple le code SQL:
+                        "ORDER BY
+                            notation.note ASC;"
+            - Joins: On peux faire toute les jointures que l'on souhaite:
+                Source Columns: etudiant.numetu
+                Join type: =
+                Destination Columns: notation.numetu
+                Cette exemple à été écrit automatiquement lorsque l'on a
+                relier les deux tables par le numetu. Le code SQL généré:
+                    "WHERE 
+                        etudiant.numetu = notation.numetu"
+        - Explain Query: Lorsque l'on clique sur cette icone on obtient
+            Une explication de la requete lancée. Cette explication
+            est graphique.
+            On y voit les tables des selections et les étapes faites pour
+                les joindres.
+            En passant la souris sur les elements graphique on y trouve des
+                informations tel que le cout, la hauteur de tableau ou la
+                largeur.
+
+
+2
+    2.1 Intégrité de données
+        1. Limiter les valeurs des notes à l’intervalle [0; 20].
+            > ALTER TABLE notation ADD CHECK ( note BETWEEN 0 AND 20);
+
+            Succes:     INSERT INTO Notation VALUES (110, 41031, 10);
+            Fail:   INSERT INTO Notation VALUES (222, 41031, 21);
+            Message: 
+                "ERROR: new row for relation "notation" violates check constraint "notation_note_check1"
+                SQL state: 23514
+                Detail: Failing row contains (222, 41031, 21)."
+
+        2. Limiter les valeurs de codes postaux à un intervalle valide.
+            > ALTER TABLE etudiant ADD CHECK ( cp BETWEEN '1000' AND '90000');
+
+            Succes:     INSERT INTO Etudiant VALUES (333, 'Dupo', 'George', '1992-06-01', 'Rue de Ici', '25000', 'Besac');
+            Fail:   INSERT INTO Etudiant VALUES (444, 'Pontdu', 'Albert', '1991-06-01', 'Rue de Pala', '92000', 'Haha');
+            Message:
+                "ERROR: new row for relation "etudiant" violates check constraint "etudiant_cp_check"
+                SQL state: 23514
+                Detail: Failing row contains (444, Pontdu, Albert, 1991-06-01, Rue de Pala, 92000, Haha)."
+
+        3. Garantir que le code postal est inexistant si la ville n’est pas saisie.
+            > ALTER TABLE Etudiant ADD CHECK ((ville IS NULL AND rue IS NULL) OR (ville IS NOT NULL)) ;
+
+            Succes:     INSERT INTO Etudiant VALUES (555,'Allan','Parish','1990-11-02','Rue des champs',90000, 'Belfort') ;
+            fail:   INSERT INTO Etudiant VALUES (666,'Jean','Paul','1991-11-01','Rue des bois',25000,NULL) ;
+            Message:
+                "ERROR: new row for relation "etudiant" violates check constraint "etudiant_check"
+                SQL state: 23514
+                Detail: Failing row contains (777, Jean, Paul, 1991-11-01, Rue des bois, 25000, null)."
+
+        4. Garantir que la rue est inexistante si le code postal et la ville ne sont pas saisis.
+            > ALTER TABLE Etudiant ADD CHECK ((ville IS NULL AND cp IS NULL AND rue is NULL) OR (ville IS NOT NULL OR cp IS NOT NULL)) ;
+
+            Succes: INSERT INTO Etudiant VALUES (888, 'Beta', 'Alpha', '1950-06-06', NULL, NULL, NULL);
+            Fail:   INSERT INTO Etudiant VALUES (999,'Truc','Much','1996-04-03','Rue de Chose',NULL,NULL) ;
+            Message:
+                "ERROR: new row for relation "etudiant" violates check constraint "etudiant_check"
+                SQL state: 23514
+                Detail: Failing row contains (999, Truc, Much, 1996-04-03, Rue de Chose, null, null)."
+
+        5. Bien que chaque étudiant puisse concourir, aucune note ne peut être saisie pour les étudiants mineurs.
+            >
+
+            Succes:
+            Fail:
+            Message:
+                ""
+
+
+
+3 Gestion de spectacle
+    3.3 Requète de selection
+
+        1. Quelles sont les dates du concert de Corneille au Zenith de Paris ?
+
+            >
+            "SELECT conc.Date FROM Concert conc, Spectacle spec, Salle sal
+            WHERE conc.Spectacle_ID=spec.Spectacle_ID
+            AND spec.Salle_ID=sal.Salle_ID
+            AND spec.Chanteur='Corneille'
+            AND sal.Nom='Zénith'
+            AND sal.Adresse='Paris'"
+
+        2. Quels sont les noms des salles ayant la plus grande capacité ?
+
+            >
+            "SELECT nom, adresse
+            FROM Salle
+            WHERE Capacite=(
+                SELECT MAX(Capacite) FROM Salle
+            );"
+
+        3. Quels sont les chanteurs n’ayant jamais réalisé de concert à la Cigale ?
+
+            >
+            "SELECT Chanteur FROM Spectacle 
+            WHERE Chanteur NOT IN(
+                SELECT Chanteur FROM Spectacle spec, Salle sal 
+                WHERE spec.Salle_ID=sal.Salle_ID
+                AND sal.nom='La Cigale'
+                AND spec.Chanteur IS NOT NULL
+            );"
+
+        4. Quels sont les chanteurs ayant réalisé au moins un concert dans toutes les salles ?
+
+            >
+            "SELECT Chanteur
+            FROM Spectacle, Concert
+            WHERE Spectacle.Spectacle_ID=Concert.Spectacle_ID
+            GROUP BY Chanteur 
+            HAVING COUNT(DISTINCT Salle_ID) = (
+                SELECT COUNT(DISTINCT Salle_ID)
+                FROM Spectacle
+            );"
+
+            Pour réaliser cette requète il a fallu ajouter un concert 
+                pour Corneille (il lui restait une seul salle où il n'as
+                pas fais de concert)
+
+        5. Quels sont les dates et les identificateurs des concerts pour lesquels il ne reste aucun billet invendu ?
+
+            >
+            "SELECT conc.Date,conc.Concert_ID FROM Concert conc, Spectacle spec, Salle sal 
+            WHERE conc.Spectacle_ID=spec.Spectacle_ID
+            AND spec.Salle_ID=sal.Salle_ID
+            AND sal.Capacite=(
+                SELECT count(vent.Billet_ID) FROM Vente vent, Billet bil
+                WHERE vent.Billet_ID=bil.Billet_ID
+                AND bil.Concert_ID=conc.Concert_ID
+                AND conc.Spectacle_ID=spec.Spectacle_ID
+                AND spec.Salle_ID=sal.Salle_ID
+                GROUP BY bil.Concert_ID
+            );"
+
+            Afin de rendre possible cette requete il a fallu se creer un
+            concert et une salle à place limitée, afin de pouvoir inserer
+            un nombre de vente limité.
