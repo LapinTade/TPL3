@@ -32,6 +32,118 @@ typedef struct {
          iliste* fin;
 } ifile;
 
+/* Fonction qui permet de savoir si
+un état est déja dans la file
+(avec le tableau d'état correspondant 
+passé en paramètre ) retourne 1
+si il est dans la file, 0 sinon*/
+int estDansFile(ifile f, int* pt, int n){
+	int i;
+	iliste* tmp;
+	tmp = f.debut;
+	while(tmp){
+		if(tmp->tailleVal == n){
+			i = 0;
+			while(i<n && pt[i] == tmp->val[i]){
+				i++;
+			}
+			if(i == n){
+				return 1;
+			}
+		}
+		tmp = tmp->nxt;
+	}
+	return 0;
+}
+
+/* Fonction qui permet de savoir si
+un état est déja dans la file et de retourner 
+son numéro */
+int numEtatDansFile(ifile f, int* pt, int n){
+	int i;
+	iliste* tmp;
+	tmp = f.debut;
+	while(tmp){
+		if(tmp->tailleVal == n){
+			i = 0;
+			while(i<n && pt[i] == tmp->val[i]){
+				i++;
+			}
+			if(i == n){
+				return tmp->state;
+			}
+		}
+		tmp = tmp->nxt;
+	}
+	return -1;
+
+}
+
+/*Fonction qui permet d'ajouter un élément 
+à la file sans doublon */
+void ajouteFile(ifile* f, int* pt, int n){
+	int i;
+	iliste* tmp;
+	tmp = (iliste*) malloc (sizeof(iliste));
+	tmp->val = (int*) malloc (n*sizeof(int));
+	for(i=0; i<n; i++){
+		tmp->val[i] = pt[i];
+	}
+	tmp->nxt = NULL;
+	tmp->tailleVal = n;
+	if(f->fin != NULL){
+		tmp->state = f->fin->state + 1;
+		f->fin->nxt = tmp;
+		f->fin = tmp;
+
+		return;
+	}
+	tmp->state = 0;
+	f->fin = tmp;
+	f->debut = tmp;
+}
+
+/* Fonction qui permet d'afficher la file */
+void afficheFile(ifile f){
+	iliste* pt;
+	int i;
+	int j = 0;
+	pt = f.debut;
+	while(pt){
+		printf("-----------------------------\n");
+		printf("Element %d\n", pt->state);
+		for(i=0; i<pt->tailleVal; i++){
+			printf(" %d", pt->val[i]);
+		}
+	
+		pt = pt->nxt;
+		j++;
+		printf("\n");
+	}
+}
+
+/*Fonction qui permet de supprimer une file
+sans qu'il y est de fuite mémoire */
+void libereFile(ifile* F){
+	iliste* tmp = NULL;
+
+	// Libère tous les éléments de la file
+	while(F->debut != NULL){
+		tmp = F->debut;
+		F->debut = F->debut->nxt;
+		free(tmp->val);
+		free(tmp);
+		tmp = NULL;
+	}
+
+	// Libère la file
+	free(F);
+	F = NULL;
+}
+
+
+/////////////////
+
 
 // Fonction qui ajouter un element à une liste
 void ajouteListe(liste** l,int q){
