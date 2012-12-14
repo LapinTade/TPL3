@@ -1530,14 +1530,14 @@ de la méthode de Hopcroft (vue en TD) */
 void minimiseHopcroft(automate* au){
 
 	if(deterministe(*au) == 0){
-		determinise(au);
+		determinise(&au);
 	}
 
 	if(complet(*au) == 0){
 		completer(au);
 	}
 
-	automate* T = *au;
+	automate* T = au;
 	int i,j,k,l;
 	int numClasse = 1;
 	int dif = 0;
@@ -1651,7 +1651,7 @@ void minimiseHopcroft(automate* au){
 		}
 		
 
-		*au = new;
+		au = new;
 		supprimeAutomate(T);
 	}
 
@@ -1831,13 +1831,20 @@ int main() {
                		produit(auProd,auProd1,auProdResult);
                		printf("Automate produit\n");
                		afficheAutomate(*auProdResult);
+
+               		supprimeAutomate(auProd1);
+    				supprimeAutomate(auProd);
                		break;
                	case 14:
                		printf("Test si l'Intersection des automates est vide. (utilisation des automates exemples)\n");
                		construitAutomateExempleProd1(auProd);
                		construitAutomateExempleProd2(auProd1);;
                		printf("intersectionVide ?\n");
-               		if(intersectionVide(auProd,auProd1));
+               		if(intersectionVide(auProd,auProd1)) {
+               			printf("OUI\n");
+               		} else {
+               			printf("NON\n");
+               		};
                		break;
                	case 15:
                		printf("Compte Transitions\n");
@@ -1849,6 +1856,7 @@ int main() {
                		construitAutomateExempleDeterm(auDeter);
                		determinise(&auDeter);
                		afficheAutomate(*auDeter);
+               		supprimeAutomate(auDeter);
                		break;
                	case 17:
                		printf("Test d'inclusion\n");
@@ -1860,19 +1868,23 @@ int main() {
                		} {
                			printf("L'automate 1 n'est pas inclu dans le 2\n");
                		}
+
+               		supprimeAutomate(auInc1);
+    				supprimeAutomate(auInc2);
                		break;
            		case 18:
            			printf("Minimization\n");
            			automate* auMinim = (automate*) malloc(sizeof(automate));
-           			automate* auMinim2 = (automate*) malloc(sizeof(automate));
+           			//automate* auMinim2 = (automate*) malloc(sizeof(automate));
            			construitAutomateExempleMinimization(auMinim);
            			printf("Minimise NERODE !\n");
            			minimiseNerode(&auMinim);
            			afficheAutomate(*auMinim);
-           			printf("Minimise HOPCROFT !\n");
-           			construitAutomateExempleMinimization(auMinim2);
-           			minimiseHopcroft(auMinim2);
-           			afficheAutomate(*auMinim2);
+           			supprimeAutomate(auMinim);
+           			//printf("Minimise HOPCROFT !\n");
+           			//construitAutomateExempleMinimization(auMinim2);
+           			//minimiseHopcroft(auMinim2);
+           			//afficheAutomate(*auMinim2);
            			break;
                 case 19:
                 	continuer = 0;
