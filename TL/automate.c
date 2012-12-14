@@ -357,6 +357,179 @@ void construitAutomateExempleProd2(automate* au) {
 	ajouteTransition(au,2,2,'b');
 }//*/
 
+
+// Fonction qui construit l'automate exemple pour la derterminisation
+void construitAutomateExempleDeterm(automate* au) {
+	int i,j,k;
+	int targ;
+	char tran;
+
+	// Tailles générales de l'automates
+	au->size = 3;
+	au->sizeAlpha = 2;
+
+	// Etats initiaux
+	au->initial = (int*) malloc(au->size*sizeof(int));
+	au->initial[0]=1;
+	au->initial[1]=0;
+	au->initial[2]=0;
+
+
+	// Etats finaux
+	au->final = (int*) malloc(au->size*sizeof(int));
+	au->final[0]=0;
+	au->final[1]=0;
+	au->final[2]=1;
+
+	// Creation/initialisations de transitions vides
+	au->trans = (liste***) malloc(au->size*sizeof(liste***));
+	for(i=0;i<au->size;i++){
+		au->trans[i]=(liste**) malloc(au->sizeAlpha*sizeof(liste*));
+		for(k=0;k<au->sizeAlpha;k++){
+			au->trans[i][k]=NULL;
+		}
+	}
+
+	ajouteTransition(au,0,0,'a');
+	ajouteTransition(au,0,0,'b');
+	ajouteTransition(au,0,1,'a');
+
+	ajouteTransition(au,1,2,'a');
+	ajouteTransition(au,1,2,'b');
+
+}
+
+
+void construitAutomateExempleInclusion(automate* au1, automate* au2) {
+	int i,j,k;
+	int targ;
+	char tran;
+
+	// Tailles générales de l'automates
+	au1->size = 4;
+	au1->sizeAlpha = 2;
+
+	// Etats initiaux
+	au1->initial = (int*) malloc(au1->size*sizeof(int));
+	au1->initial[0]=1;
+	au1->initial[1]=0;
+	au1->initial[2]=0;
+	au1->initial[3]=0;
+
+
+	// Etats finaux
+	au1->final = (int*) malloc(au1->size*sizeof(int));
+	au1->final[0]=0;
+	au1->final[1]=0;
+	au1->final[2]=1;
+	au1->final[3]=1;
+
+	// Creation/initialisations de transitions vides
+	au1->trans = (liste***) malloc(au1->size*sizeof(liste***));
+	for(i=0;i<au1->size;i++){
+		au1->trans[i]=(liste**) malloc(au1->sizeAlpha*sizeof(liste*));
+		for(k=0;k<au1->sizeAlpha;k++){
+			au1->trans[i][k]=NULL;
+		}
+	}
+
+	ajouteTransition(au1,0,1,'a');
+	ajouteTransition(au1,0,2,'a');
+
+	ajouteTransition(au1,1,3,'b');
+
+
+	// Tailles générales de l'automates
+	au2->size = 3;
+	au2->sizeAlpha = 2;
+
+	// Etats initiaux
+	au2->initial = (int*) malloc(au2->size*sizeof(int));
+	au2->initial[0]=1;
+	au2->initial[1]=0;
+	au2->initial[2]=0;
+
+
+	// Etats finaux
+	au2->final = (int*) malloc(au2->size*sizeof(int));
+	au2->final[0]=0;
+	au2->final[1]=0;
+	au2->final[2]=1;
+
+	// Creation/initialisations de transitions vides
+	au2->trans = (liste***) malloc(au2->size*sizeof(liste***));
+	for(i=0;i<au2->size;i++){
+		au2->trans[i]=(liste**) malloc(au2->sizeAlpha*sizeof(liste*));
+		for(k=0;k<au2->sizeAlpha;k++){
+			au2->trans[i][k]=NULL;
+		}
+	}
+
+	ajouteTransition(au2,0,1,'a');
+
+	ajouteTransition(au2,1,2,'b');
+
+	ajouteTransition(au2,2,1,'b');
+}
+
+void construitAutomateExempleMinimization(automate* au) {
+	int i,j,k;
+	int targ;
+	char tran;
+
+	// Tailles générales de l'automates
+	au->size = 6;
+	au->sizeAlpha = 2;
+
+	// Etats initiaux
+	au->initial = (int*) malloc(au->size*sizeof(int));
+	au->initial[0]=1;
+	au->initial[1]=0;
+	au->initial[2]=0;
+	au->initial[3]=0;
+	au->initial[4]=0;
+	au->initial[5]=0;
+
+
+
+	// Etats finaux
+	au->final = (int*) malloc(au->size*sizeof(int));
+	au->final[0]=1;
+	au->final[1]=0;
+	au->final[2]=0;
+	au->final[3]=0;
+	au->final[4]=0;
+	au->final[5]=1;
+
+	// Creation/initialisations de transitions vides
+	au->trans = (liste***) malloc(au->size*sizeof(liste***));
+	for(i=0;i<au->size;i++){
+		au->trans[i]=(liste**) malloc(au->sizeAlpha*sizeof(liste*));
+		for(k=0;k<au->sizeAlpha;k++){
+			au->trans[i][k]=NULL;
+		}
+	}
+
+	ajouteTransition(au,0,5,'a');
+	ajouteTransition(au,0,1,'b');
+
+	ajouteTransition(au,1,2,'b');
+	ajouteTransition(au,1,4,'a');
+
+	ajouteTransition(au,2,2,'a');
+	ajouteTransition(au,2,1,'b');
+
+	ajouteTransition(au,3,3,'a');
+	ajouteTransition(au,3,5,'b');
+
+	ajouteTransition(au,4,1,'a');
+	ajouteTransition(au,4,3,'b');
+
+	ajouteTransition(au,5,5,'a');
+	ajouteTransition(au,5,4,'b');
+}
+
+
 // Affiche l'automate passé en paramètre
 void afficheAutomate(automate au){
 	int i,j;
@@ -1354,14 +1527,14 @@ void minimiseNerode(automate** au){
 
 /* Fonction qui minimise un automate en se servant
 de la méthode de Hopcroft (vue en TD) */
-void minimiseHopcroft(automate** au){
+void minimiseHopcroft(automate* au){
 
-	if(deterministe(**au) == 0){
+	if(deterministe(*au) == 0){
 		determinise(au);
 	}
 
-	if(complet(**au) == 0){
-		completer(*au);
+	if(complet(*au) == 0){
+		completer(au);
 	}
 
 	automate* T = *au;
@@ -1394,7 +1567,7 @@ void minimiseHopcroft(automate** au){
 			}
 		}
 	} 
-	
+
 
 // tant que la première et la dernière ligne ne sont pas égales
 	while(equiv != 1){
@@ -1490,6 +1663,9 @@ void minimiseHopcroft(automate** au){
 }
 
 
+
+
+
 int main() {
    	int continuer = 1;
    	int continuer2 = 1;
@@ -1568,7 +1744,7 @@ int main() {
     	int selection1, selection2;
     	char trans;
     	while(continuer2) {
-    		printf("\n>1. Afficher l'automate\n>2. Completer l'automate\n>3. L'automate est-il complet ?\n>4. L'automate est-il deterministe?\n>5. Supprimer un etat de l'automate\n>6. Fusionner 2 etats de l'automate\n>7. Supprimer une transition de l'automate\n>8. Ajouter une transition a l'automate\n>9. Creer graphe et l\'afficher\n>10. Langage Vide ? \n>11. Supression etat non coaccessible\n>12. Supression etat non accessible\n>13. Creation et produit de deux automates\n>14. Intersection des deux langages vides ?\n>15 compteTransitions.\n>16. Arreter programme\n> Choix : ");
+    		printf("\n>1. Afficher l'automate\n>2. Completer l'automate\n>3. L'automate est-il complet ?\n>4. L'automate est-il deterministe?\n>5. Supprimer un etat de l'automate\n>6. Fusionner 2 etats de l'automate\n>7. Supprimer une transition de l'automate\n>8. Ajouter une transition a l'automate\n>9. Creer graphe et l\'afficher\n>10. Langage Vide ? \n>11. Supression etat non coaccessible\n>12. Supression etat non accessible\n>13. Creation et produit de deux automates\n>14. Intersection des deux langages vides ?\n>15 compteTransitions.\n>16 determinise(exemple)\n>17 Inclusion? (exemple) \n>18 Minimization (exemple)\n>19. Arreter programme\n> Choix : ");
 			scanf("%i", &choix);
 
 			switch(choix) {
@@ -1667,7 +1843,38 @@ int main() {
                		printf("Compte Transitions\n");
                		printf("Il y a %i transition(s)\n",compteTransitions(*au));
                		break;
-                case 16:
+               	case 16:
+               		printf("Determinisation\n");
+               		automate* auDeter = (automate*) malloc(sizeof(automate));
+               		construitAutomateExempleDeterm(auDeter);
+               		determinise(&auDeter);
+               		afficheAutomate(*auDeter);
+               		break;
+               	case 17:
+               		printf("Test d'inclusion\n");
+               		automate* auInc1 = (automate*) malloc(sizeof(automate));
+               		automate* auInc2 = (automate*) malloc(sizeof(automate));
+               		construitAutomateExempleInclusion(auInc1, auInc2);
+               		if(inclusion(&auInc2,auInc1)) {
+               			printf("L'automate 1 est inclu dans le 2\n");
+               		} {
+               			printf("L'automate 1 n'est pas inclu dans le 2\n");
+               		}
+               		break;
+           		case 18:
+           			printf("Minimization\n");
+           			automate* auMinim = (automate*) malloc(sizeof(automate));
+           			automate* auMinim2 = (automate*) malloc(sizeof(automate));
+           			construitAutomateExempleMinimization(auMinim);
+           			printf("Minimise NERODE !\n");
+           			minimiseNerode(&auMinim);
+           			afficheAutomate(*auMinim);
+           			printf("Minimise HOPCROFT !\n");
+           			construitAutomateExempleMinimization(auMinim2);
+           			minimiseHopcroft(auMinim2);
+           			afficheAutomate(*auMinim2);
+           			break;
+                case 19:
                 	continuer = 0;
                 	continuer2 = 0;
                 	break;
