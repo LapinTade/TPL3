@@ -1,0 +1,15 @@
+digraph AST {
+node [shape="box",style="filled",fillcolor="cornsilk"]6 [label="+"]
+6 -> 4
+6 -> 5
+4 [label="+"]
+4 -> 2
+4 -> 3
+2 [label="+"]
+2 -> 0
+2 -> 1
+0 [label="i:4"]
+1 [label="i:3"]
+3 [label="i:2"]
+5 [label="i:1"]
+}

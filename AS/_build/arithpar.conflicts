@@ -1,0 +1,26 @@
+
+** Conflict (shift/reduce) in state 5.
+** Token involved: PLUS
+** This state is reached from start after reading:
+
+int_plus_left PLUS int_plus_left 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+int_plus_left EOF 
+(?)
+
+** In state 5, looking ahead at PLUS, shifting is permitted
+** because of the following sub-derivation:
+
+int_plus_left PLUS int_plus_left 
+                   int_plus_left . PLUS int_plus_left 
+
+** In state 5, looking ahead at PLUS, reducing production
+** int_plus_left -> int_plus_left PLUS int_plus_left 
+** is permitted because of the following sub-derivation:
+
+int_plus_left PLUS int_plus_left // lookahead token appears
+int_plus_left PLUS int_plus_left . 

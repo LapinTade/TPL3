@@ -1008,8 +1008,6 @@ void supprimeGraphe(graphe* gr){
 	gr = NULL;
 }
 
-// Renvoie 1 si le langage de l'automate passé en paramètre est vide.
-// 0 si il ne l'est pas
 int langageVide(automate* au){
 	int i,k;
 	int sum = 0;
@@ -1018,9 +1016,6 @@ int langageVide(automate* au){
 
 	automateToGraphe(au, gr);
 
-	// On verifie si à partir de chaque état initial on a un chemin.
-	// Si la sum == 0; alors aucun chemin ne part des états initials
-	// Le langage est donc vide.
 
 	for(i=0 ; i<au->size ; i++){
 		if(au->initial[i] == 1){
@@ -1491,7 +1486,7 @@ int nerodeEquivalent(automate* au, int e1, int e2){
 		j++;
 	}
 	
-// sinon il le son
+// sinon il le sont
 	return 1;
 }
 
@@ -1526,7 +1521,7 @@ void minimiseNerode(automate** au){
 }
 
 /* Fonction qui minimise un automate en se servant
-de la méthode de Hopcroft (vue en TD) */
+de la méthode de Hopcroft NON FONCTIONNELLE */
 void minimiseHopcroft(automate* au){
 
 	if(deterministe(*au) == 0){
@@ -1806,7 +1801,7 @@ int main() {
                 	break;
                 case 10:
                 	printf("L'automate a-t-il un langage vide ?\n");
-                	if(langageVide) {
+                	if(langageVide(au)) {
                 		printf("Oui\n");
                 	} else {
                 		printf("Non\n");
