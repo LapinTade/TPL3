@@ -19,7 +19,7 @@ and _menhir_env = {
 }
 
 and _menhir_state = 
-  | MenhirState4
+  | MenhirState2
   | MenhirState0
 
   
@@ -33,69 +33,38 @@ open ArithAST
 let _eRR =
   Error
 
-let rec _menhir_run4 : _menhir_env -> 'ttv_tail * _menhir_state * (ArithAST.t) -> 'ttv_return =
-  fun _menhir_env _menhir_stack ->
-    Printf.fprintf Pervasives.stderr "State 4:\n%!";
-    let _tok = _menhir_discard _menhir_env in
-    match _tok with
-    | INT _v ->
-        Printf.fprintf Pervasives.stderr "Shifting (INT) to state 1\n%!";
-        _menhir_run1 _menhir_env (Obj.magic _menhir_stack) MenhirState4 _v
-    | _ ->
-        assert (Pervasives.(>=) _menhir_env._menhir_shifted 0);
-        Printf.fprintf Pervasives.stderr "Initiating error handling\n%!";
-        _menhir_env._menhir_shifted <- (-1);
-        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState4
-
-and _menhir_goto_int_plus_left : _menhir_env -> 'ttv_tail -> _menhir_state -> (ArithAST.t) -> 'ttv_return =
+let rec _menhir_goto_int_plus_right : _menhir_env -> 'ttv_tail -> _menhir_state -> (ArithAST.t) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
     match _menhir_s with
-    | MenhirState0 ->
+    | MenhirState2 ->
         let _menhir_stack = Obj.magic _menhir_stack in
         Printf.fprintf Pervasives.stderr "State 3:\n%!";
-        assert (Pervasives.(<>) _menhir_env._menhir_shifted (-1));
-        let _tok = _menhir_env._menhir_token in
-        (match _tok with
-        | EOF ->
-            Printf.fprintf Pervasives.stderr "Shifting (EOF) to state 6\n%!";
-            let _menhir_stack = Obj.magic _menhir_stack in
-            Printf.fprintf Pervasives.stderr "State 6:\n%!";
-            let _menhir_stack = Obj.magic _menhir_stack in
-            Printf.fprintf Pervasives.stderr "Reducing production start -> int_plus_left EOF \n%!";
-            let (_menhir_stack, _menhir_s, _1) = _menhir_stack in
-            let _v : (ArithAST.t) =                          ( _1 ) in
-            let _menhir_stack = Obj.magic _menhir_stack in
-            Printf.fprintf Pervasives.stderr "State 2:\n%!";
-            let _menhir_stack = Obj.magic _menhir_stack in
-            let _1 = _v in
-            Printf.fprintf Pervasives.stderr "Accepting\n%!";
-            Obj.magic _1
-        | PLUS ->
-            Printf.fprintf Pervasives.stderr "Shifting (PLUS) to state 4\n%!";
-            _menhir_run4 _menhir_env (Obj.magic _menhir_stack)
-        | _ ->
-            assert (Pervasives.(>=) _menhir_env._menhir_shifted 0);
-            Printf.fprintf Pervasives.stderr "Initiating error handling\n%!";
-            _menhir_env._menhir_shifted <- (-1);
-            let _menhir_stack = Obj.magic _menhir_stack in
-            let (_menhir_stack, _menhir_s, _) = _menhir_stack in
-            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s)
-    | MenhirState4 ->
+        let _menhir_stack = Obj.magic _menhir_stack in
+        Printf.fprintf Pervasives.stderr "Reducing production int_plus_right -> INT PLUS int_plus_right \n%!";
+        let ((_menhir_stack, _menhir_s, l), _, r) = _menhir_stack in
+        let _v : (ArithAST.t) =                               ( Bin (Plus, Int(l), r)) in
+        _menhir_goto_int_plus_right _menhir_env _menhir_stack _menhir_s _v
+    | MenhirState0 ->
         let _menhir_stack = Obj.magic _menhir_stack in
         Printf.fprintf Pervasives.stderr "State 5:\n%!";
         assert (Pervasives.(<>) _menhir_env._menhir_shifted (-1));
         let _tok = _menhir_env._menhir_token in
         match _tok with
-        | PLUS ->
-            Printf.fprintf Pervasives.stderr "Shifting (PLUS) to state 4\n%!";
-            _menhir_run4 _menhir_env (Obj.magic _menhir_stack)
         | EOF ->
+            Printf.fprintf Pervasives.stderr "Shifting (EOF) to state 6\n%!";
             let _menhir_stack = Obj.magic _menhir_stack in
-            Printf.fprintf Pervasives.stderr "Reducing production int_plus_left -> int_plus_left PLUS int_plus_left \n%!";
-            let ((_menhir_stack, _menhir_s, l), _, r) = _menhir_stack in
-            let _v : (ArithAST.t) =                                        ( Bin (Plus, r, l)) in
-            _menhir_goto_int_plus_left _menhir_env _menhir_stack _menhir_s _v
+            Printf.fprintf Pervasives.stderr "State 6:\n%!";
+            let _menhir_stack = Obj.magic _menhir_stack in
+            Printf.fprintf Pervasives.stderr "Reducing production start -> int_plus_right EOF \n%!";
+            let (_menhir_stack, _menhir_s, _1) = _menhir_stack in
+            let _v : (ArithAST.t) =                           ( _1 ) in
+            let _menhir_stack = Obj.magic _menhir_stack in
+            Printf.fprintf Pervasives.stderr "State 4:\n%!";
+            let _menhir_stack = Obj.magic _menhir_stack in
+            let _1 = _v in
+            Printf.fprintf Pervasives.stderr "Accepting\n%!";
+            Obj.magic _1
         | _ ->
             assert (Pervasives.(>=) _menhir_env._menhir_shifted 0);
             Printf.fprintf Pervasives.stderr "Initiating error handling\n%!";
@@ -120,7 +89,7 @@ and _menhir_discard : _menhir_env -> token =
 and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s ->
     match _menhir_s with
-    | MenhirState4 ->
+    | MenhirState2 ->
         let _menhir_stack = Obj.magic _menhir_stack in
         let (_menhir_stack, _menhir_s, _) = _menhir_stack in
         _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s
@@ -131,12 +100,36 @@ and _menhir_errorcase : _menhir_env -> 'ttv_tail -> _menhir_state -> 'ttv_return
 and _menhir_run1 : _menhir_env -> 'ttv_tail -> _menhir_state -> (int) -> 'ttv_return =
   fun _menhir_env _menhir_stack _menhir_s _v ->
     Printf.fprintf Pervasives.stderr "State 1:\n%!";
-    let _ = _menhir_discard _menhir_env in
-    let _menhir_stack = Obj.magic _menhir_stack in
-    let i = _v in
-    Printf.fprintf Pervasives.stderr "Reducing production int_plus_left -> INT \n%!";
-    let _v : (ArithAST.t) =         ( Int i ) in
-    _menhir_goto_int_plus_left _menhir_env _menhir_stack _menhir_s _v
+    let _menhir_stack = (_menhir_stack, _menhir_s, _v) in
+    let _tok = _menhir_discard _menhir_env in
+    match _tok with
+    | PLUS ->
+        Printf.fprintf Pervasives.stderr "Shifting (PLUS) to state 2\n%!";
+        let _menhir_stack = Obj.magic _menhir_stack in
+        Printf.fprintf Pervasives.stderr "State 2:\n%!";
+        let _tok = _menhir_discard _menhir_env in
+        (match _tok with
+        | INT _v ->
+            Printf.fprintf Pervasives.stderr "Shifting (INT) to state 1\n%!";
+            _menhir_run1 _menhir_env (Obj.magic _menhir_stack) MenhirState2 _v
+        | _ ->
+            assert (Pervasives.(>=) _menhir_env._menhir_shifted 0);
+            Printf.fprintf Pervasives.stderr "Initiating error handling\n%!";
+            _menhir_env._menhir_shifted <- (-1);
+            _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) MenhirState2)
+    | EOF ->
+        let _menhir_stack = Obj.magic _menhir_stack in
+        Printf.fprintf Pervasives.stderr "Reducing production int_plus_right -> INT \n%!";
+        let (_menhir_stack, _menhir_s, i) = _menhir_stack in
+        let _v : (ArithAST.t) =         ( Int i ) in
+        _menhir_goto_int_plus_right _menhir_env _menhir_stack _menhir_s _v
+    | _ ->
+        assert (Pervasives.(>=) _menhir_env._menhir_shifted 0);
+        Printf.fprintf Pervasives.stderr "Initiating error handling\n%!";
+        _menhir_env._menhir_shifted <- (-1);
+        let _menhir_stack = Obj.magic _menhir_stack in
+        let (_menhir_stack, _menhir_s, _) = _menhir_stack in
+        _menhir_errorcase _menhir_env (Obj.magic _menhir_stack) _menhir_s
 
 and _menhir_print_token : token -> string =
   fun _tok ->

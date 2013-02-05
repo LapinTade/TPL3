@@ -1,9 +1,65 @@
 
-** Conflict (shift/reduce) in state 5.
+** Conflict (shift/reduce) in state 13.
+** Tokens involved: TIMES PLUS
+** The following explanations concentrate on token TIMES.
+** This state is reached from start after reading:
+
+int_plus_left PLUS arith PLUS arith 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+int_plus_left EOF 
+int_plus_left PLUS arith 
+                   (?)
+
+** In state 13, looking ahead at TIMES, reducing production
+** arith -> arith PLUS arith 
+** is permitted because of the following sub-derivation:
+
+arith TIMES arith // lookahead token appears
+arith PLUS arith . 
+
+** In state 13, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+arith PLUS arith 
+           arith . TIMES arith 
+
+** Conflict (shift/reduce) in state 11.
+** Tokens involved: TIMES PLUS
+** The following explanations concentrate on token TIMES.
+** This state is reached from start after reading:
+
+int_plus_left PLUS arith TIMES arith 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+int_plus_left EOF 
+int_plus_left PLUS arith 
+                   (?)
+
+** In state 11, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+arith TIMES arith 
+            arith . TIMES arith 
+
+** In state 11, looking ahead at TIMES, reducing production
+** arith -> arith TIMES arith 
+** is permitted because of the following sub-derivation:
+
+arith TIMES arith // lookahead token appears
+arith TIMES arith . 
+
+** Conflict (shift/reduce) in state 9.
 ** Token involved: PLUS
 ** This state is reached from start after reading:
 
-int_plus_left PLUS int_plus_left 
+int_plus_left PLUS arith 
 
 ** The derivations that appear below have the following common factor:
 ** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
@@ -12,15 +68,15 @@ start
 int_plus_left EOF 
 (?)
 
-** In state 5, looking ahead at PLUS, shifting is permitted
+** In state 9, looking ahead at PLUS, shifting is permitted
 ** because of the following sub-derivation:
 
-int_plus_left PLUS int_plus_left 
-                   int_plus_left . PLUS int_plus_left 
+int_plus_left PLUS arith 
+                   arith . PLUS arith 
 
-** In state 5, looking ahead at PLUS, reducing production
-** int_plus_left -> int_plus_left PLUS int_plus_left 
+** In state 9, looking ahead at PLUS, reducing production
+** int_plus_left -> int_plus_left PLUS arith 
 ** is permitted because of the following sub-derivation:
 
-int_plus_left PLUS int_plus_left // lookahead token appears
-int_plus_left PLUS int_plus_left . 
+int_plus_left PLUS arith // lookahead token appears
+int_plus_left PLUS arith . 

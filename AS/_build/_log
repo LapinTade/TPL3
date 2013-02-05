@@ -18,17 +18,9 @@
 # Target: arithlex.ml.depends, tags: { extension:ml, file:arithlex.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules arithlex.ml > arithlex.ml.depends # cached
 # Target: arithpar.mly.depends, tags: { extension:mly, file:arithpar.mly, menhir_ocamldep, ocaml, ocamldep, quiet }
-/usr/bin/menhir --raw-depend --ocamldep '/usr/bin/ocamldep -modules' arithpar.mly > arithpar.mly.depends
-+ /usr/bin/menhir --raw-depend --ocamldep '/usr/bin/ocamldep -modules' arithpar.mly > arithpar.mly.depends
-File "arithpar.mly", line 27, characters 0-5:
-Warning: symbol arith is unreachable from any of the start symbol(s).
+/usr/bin/menhir --raw-depend --ocamldep '/usr/bin/ocamldep -modules' arithpar.mly > arithpar.mly.depends # cached
 # Target: arithpar.mly, tags: { extension:mly, file:arithpar.mly, menhir, ocaml, parser, quiet }
-/usr/bin/menhir --ocamlc /usr/bin/ocamlc -v --trace --graph --infer arithpar.mly
-+ /usr/bin/menhir --ocamlc /usr/bin/ocamlc -v --trace --graph --infer arithpar.mly
-File "arithpar.mly", line 27, characters 0-5:
-Warning: symbol arith is unreachable from any of the start symbol(s).
-Warning: one state has shift/reduce conflicts.
-Warning: one shift/reduce conflict was arbitrarily resolved.
+/usr/bin/menhir --ocamlc /usr/bin/ocamlc -v --trace --graph --infer arithpar.mly # cached
 # Target: arithpar.mli.depends, tags: { extension:mli, file:arithpar.mli, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules arithpar.mli > arithpar.mli.depends # cached
 # Target: arithpar.cmi, tags: { byte, compile, extension:mli, file:arithpar.mli, interf, ocaml, quiet }
@@ -38,9 +30,9 @@ Warning: one shift/reduce conflict was arbitrarily resolved.
 # Target: arith.cmo, tags: { byte, compile, extension:ml, file:arith.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -g -o arith.cmo arith.ml # cached
 # Target: arithpar.ml.depends, tags: { extension:ml, file:arithpar.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules arithpar.ml > arithpar.ml.depends
+/usr/bin/ocamldep -modules arithpar.ml > arithpar.ml.depends # cached
 # Target: arithpar.cmo, tags: { byte, compile, extension:ml, file:arithpar.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc -c -g -o arithpar.cmo arithpar.ml
+/usr/bin/ocamlc -c -g -o arithpar.cmo arithpar.ml # cached
 # Target: arith.byte, tags: { byte, dont_link_with, extension:byte, file:arith.byte, link, ocaml, program, quiet }
-/usr/bin/ocamlc -g unix.cma str.cma nums.cma toolkit.cmo helper.cmo arithAST.cmo arithpar.cmo arithlex.cmo arith.cmo -o arith.byte
+/usr/bin/ocamlc -g unix.cma str.cma nums.cma toolkit.cmo helper.cmo arithAST.cmo arithpar.cmo arithlex.cmo arith.cmo -o arith.byte # cached
 # Compilation successful.

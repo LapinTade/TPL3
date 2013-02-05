@@ -21,7 +21,7 @@ open ArithAST
 
 %%
 
-start: int_plus_left EOF { $1 }
+start: int_plus_right EOF { $1 }
 
 
 arith:
@@ -34,4 +34,8 @@ arith:
 
 int_plus_left:
 | i=INT { Int i }
-| l=int_plus_left PLUS r=int_plus_left { Bin (Plus, r, l)}
+| l=int_plus_left PLUS r=INT { Bin (Plus, l, Int(r))}
+
+int_plus_right:
+| i=INT { Int i }
+| l=INT PLUS r=int_plus_right { Bin (Plus, Int(l), r)}
