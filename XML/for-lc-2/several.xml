@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--  Première version avec utilisation exclusive d'éléments -->
+
+<!DOCTYPE poemefr0 SYSTEM "poemefr0.dtd"
+  [<!ENTITY s1 SYSTEM "several-1.xml">
+   <!ENTITY s2 SYSTEM "several-2.xml">]>
+
+<poemefr0>
+  <preambule>
+    <titre>Chanson d'automne</titre>
+    <recueil>Poèmes saturniens</recueil>
+    <date>1866</date>
+    <auteur>
+      <prenom>Paul</prenom>
+      <nom>Verlaine</nom>
+      <naissance>1844</naissance>
+      <deces>1896</deces>
+    </auteur>
+  </preambule>
+  <corps>
+    &s1;
+    &s2;
+    <strophe>
+      <ligne>Tout suffocant,</ligne>
+      <ligne>Et blême, quand</ligne>
+      <ligne><r/>Sonne l'heure,</ligne>
+    </strophe>
+    <strophe>
+      <ligne>Je me souviens</ligne>
+      <ligne>Des jours anciens</ligne>
+      <ligne><r/>Et je pleure ;</ligne>
+    </strophe>
+    <strophe>
+      <ligne>Et je m'en vais</ligne>
+      <ligne>Au vent mauvais</ligne>
+      <ligne><r/>Qui m'emporte</ligne>
+    </strophe>
+    <strophe>
+      <ligne>Deça, delà,</ligne>
+      <ligne>Pareil à la</ligne>
+      <ligne><r/>Feuille morte.</ligne>
+    </strophe>
+  </corps>
+</poemefr0>
