@@ -1,0 +1,49 @@
+### Starting build.
+# Target: arith.ml.depends, tags: { extension:ml, file:arith.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules arith.ml > arith.ml.depends # cached
+# Target: arithAST.ml.depends, tags: { extension:ml, file:arithAST.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules arithAST.ml > arithAST.ml.depends
+# Target: helper.ml.depends, tags: { extension:ml, file:helper.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules helper.ml > helper.ml.depends # cached
+# Target: helper.cmo, tags: { byte, compile, extension:ml, file:helper.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -g -o helper.cmo helper.ml # cached
+# Target: arithlex.mll, tags: { extension:mll, file:arithlex.mll, lexer, ocaml, ocamllex, quiet }
+/usr/bin/ocamllex -q arithlex.mll # cached
+# Target: arithlex.ml.depends, tags: { extension:ml, file:arithlex.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules arithlex.ml > arithlex.ml.depends # cached
+# Target: arithAST.cmo, tags: { byte, compile, extension:ml, file:arithAST.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -g -o arithAST.cmo arithAST.ml
+# Target: arithpar.mly.depends, tags: { extension:mly, file:arithpar.mly, menhir_ocamldep, ocaml, ocamldep, quiet }
+/usr/bin/menhir --raw-depend --ocamldep '/usr/bin/ocamldep -modules' arithpar.mly > arithpar.mly.depends
+# Target: arithpar.mly, tags: { extension:mly, file:arithpar.mly, menhir, ocaml, parser, quiet }
+/usr/bin/menhir --ocamlc /usr/bin/ocamlc -v --trace --graph --infer arithpar.mly
++ /usr/bin/menhir --ocamlc /usr/bin/ocamlc -v --trace --graph --infer arithpar.mly
+Warning: one state has shift/reduce conflicts.
+Warning: 5 states have reduce/reduce conflicts.
+Warning: 4 shift/reduce conflicts were arbitrarily resolved.
+Warning: 9 reduce/reduce conflicts were arbitrarily resolved.
+File "arithpar.mly", line 60, characters 2-29:
+Warning: production assign -> assignable ASSIGN expr is never reduced.
+File "arithpar.mly", line 99, characters 2-59:
+Warning: production fors -> FOR OPENPAR assign PV expr PV stmt CLOSEPAR bloc is never reduced.
+Warning: in total, 2 productions are never reduced.
+# Target: arithpar.mli.depends, tags: { extension:mli, file:arithpar.mli, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules arithpar.mli > arithpar.mli.depends # cached
+# Target: arithpar.cmi, tags: { byte, compile, extension:mli, file:arithpar.mli, interf, ocaml, quiet }
+/usr/bin/ocamlc -c -g -o arithpar.cmi arithpar.mli
+# Target: arithlex.cmo, tags: { byte, compile, extension:ml, file:arithlex.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -g -o arithlex.cmo arithlex.ml
+# Target: arith.cmo, tags: { byte, compile, extension:ml, file:arith.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -g -o arith.cmo arith.ml
+# Target: arithpar.ml.depends, tags: { extension:ml, file:arithpar.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules arithpar.ml > arithpar.ml.depends
+# Target: arithpar.cmo, tags: { byte, compile, extension:ml, file:arithpar.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -g -o arithpar.cmo arithpar.ml
++ /usr/bin/ocamlc -c -g -o arithpar.cmo arithpar.ml
+File "arithpar.ml", line 2986, characters 8-9:
+Warning Y: unused variable t.
+File "arithpar.ml", line 3171, characters 8-9:
+Warning Y: unused variable f.
+# Target: arith.byte, tags: { byte, dont_link_with, extension:byte, file:arith.byte, link, ocaml, program, quiet }
+/usr/bin/ocamlc -g unix.cma str.cma nums.cma helper.cmo arithAST.cmo arithpar.cmo arithlex.cmo arith.cmo -o arith.byte
+# Compilation successful.

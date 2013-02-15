@@ -1,0 +1,165 @@
+
+** Conflict (reduce/reduce) in state 84.
+** Token involved: PV
+** This state is reached from start after reading:
+
+WHILE expr ACOPEN stmts ACOFER 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF 
+stmts 
+stmts_inner 
+(?)
+
+** In state 84, looking ahead at PV, reducing production
+** bloc -> ACOPEN stmts ACOFER 
+** is permitted because of the following sub-derivation:
+
+stmt PV stmts_inner 
+whiles 
+WHILE expr stmts 
+           stmts_inner 
+           stmt PV stmts_inner // lookahead token appears
+           bloc // lookahead token is inherited
+           ACOPEN stmts ACOFER . 
+
+** In state 84, looking ahead at PV, reducing production
+** whiles -> WHILE expr ACOPEN stmts ACOFER 
+** is permitted because of the following sub-derivation:
+
+stmt PV stmts_inner // lookahead token appears
+whiles // lookahead token is inherited
+WHILE expr ACOPEN stmts ACOFER . 
+
+** Conflict (reduce/reduce) in state 79.
+** Token involved: PV
+** This state is reached from start after reading:
+
+WHILE OPENPAR expr CLOSEPAR ACOPEN stmts ACOFER 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF 
+stmts 
+stmts_inner 
+(?)
+
+** In state 79, looking ahead at PV, reducing production
+** bloc -> ACOPEN stmts ACOFER 
+** is permitted because of the following sub-derivation:
+
+stmt PV stmts_inner 
+whiles 
+WHILE OPENPAR expr CLOSEPAR stmts 
+                            stmts_inner 
+                            stmt PV stmts_inner // lookahead token appears
+                            bloc // lookahead token is inherited
+                            ACOPEN stmts ACOFER . 
+
+** In state 79, looking ahead at PV, reducing production
+** whiles -> WHILE OPENPAR expr CLOSEPAR ACOPEN stmts ACOFER 
+** is permitted because of the following sub-derivation:
+
+stmt PV stmts_inner // lookahead token appears
+whiles // lookahead token is inherited
+WHILE OPENPAR expr CLOSEPAR ACOPEN stmts ACOFER . 
+
+** Conflict (reduce/reduce) in state 76.
+** Tokens involved: PV CLOSEPAR
+** The following explanations concentrate on token PV.
+** This state is reached from start after reading:
+
+FOR OPENPAR assign PV expr PV stmt CLOSEPAR bloc 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF 
+stmts 
+stmts_inner 
+stmt PV stmts_inner // lookahead token appears
+fors // lookahead token is inherited
+(?)
+
+** In state 76, looking ahead at PV, reducing production
+** fors -> FOR OPENPAR assign PV expr PV stmt CLOSEPAR bloc 
+** is permitted because of the following sub-derivation:
+
+FOR OPENPAR assign PV expr PV stmt CLOSEPAR bloc . 
+
+** In state 76, looking ahead at PV, reducing production
+** stmt -> bloc 
+** is permitted because of the following sub-derivation:
+
+FOR OPENPAR assign PV expr PV stmt CLOSEPAR stmt // lookahead token is inherited
+                                            bloc . 
+
+** Conflict (reduce/reduce) in state 57.
+** Tokens involved: PV EOF CLOSEPAR
+** The following explanations concentrate on token PV.
+** This state is reached from start after reading:
+
+assignable ASSIGN expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF 
+stmts 
+stmts_inner 
+stmt PV stmts_inner // lookahead token appears
+assign // lookahead token is inherited
+(?)
+
+** In state 57, looking ahead at PV, reducing production
+** assign -> assignable ASSIGN expr 
+** is permitted because of the following sub-derivation:
+
+assignable ASSIGN expr . 
+
+** In state 57, looking ahead at PV, reducing production
+** assign -> assignable ASSIGN expr 
+** is permitted because of the following sub-derivation:
+
+assignable ASSIGN expr . 
+
+** Conflict (shift/reduce) in state 41.
+** Tokens involved: WHILE VAR PV FOR CLOSEPAR ACOPEN
+** The following explanations concentrate on token WHILE.
+** This state is reached from start after reading:
+
+WHILE OPENPAR expr CLOSEPAR 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF 
+stmts 
+stmts_inner 
+stmt PV stmts_inner 
+whiles 
+(?)
+
+** In state 41, looking ahead at WHILE, reducing production
+** expr -> OPENPAR expr CLOSEPAR 
+** is permitted because of the following sub-derivation:
+
+WHILE expr stmts // lookahead token appears because stmts can begin with WHILE
+      OPENPAR expr CLOSEPAR . 
+
+** In state 41, looking ahead at WHILE, shifting is permitted
+** because of the following sub-derivation:
+
+WHILE OPENPAR expr CLOSEPAR stmts 
+                            stmts_inner 
+                            stmt PV stmts_inner 
+                            whiles 
+                            . WHILE OPENPAR expr CLOSEPAR ACOPEN stmts ACOFER 
