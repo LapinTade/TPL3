@@ -344,7 +344,7 @@ public class Exemple {
 			fact2.addInstruction(new Conditionnelle(new Egalite(x, new ValeurEntier(0)),si,sinon));
 		}
 		
-		return test;
+	return test;
 	}
 	
 }

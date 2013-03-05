@@ -8,7 +8,7 @@ int LL = 'Z';
 /*
 * Analyse Frequentiel sur des lettres doubles
 */
-void dualLetterFreq(FILE* fileR) {
+void dualLetterFreq(const char* nomFile) {
 	int i;
 	char prev;
 	prev = '&';
@@ -19,11 +19,12 @@ void dualLetterFreq(FILE* fileR) {
 		iter[i]=0;
 	}
 
+	FILE* fileR = fopen(nomFile, "r");
 	do {
 		currentChar = fgetc(fileR);
 
-		if(currentChar > LL && (((char)i) == prev)) {
-			iter[i - FL]++;
+		if(currentChar > LL && (((char)currentChar) == prev)) {
+			iter[currentChar - FL]++;
 		}
 	} while(currentChar != EOF);
 
@@ -37,7 +38,7 @@ void dualLetterFreq(FILE* fileR) {
 /*
 *	Analyse frequentiel des mots de deux lettres
 */
-void doubleLetterFreq(FILE* fileR) {
+void doubleLetterFreq(const char* nomFile) {
 	int i,j;
 	int mat[26][26];
 
@@ -53,17 +54,26 @@ void doubleLetterFreq(FILE* fileR) {
 			mat[i][j] = 0;
 		}
 	}
+	FILE* fileR = fopen(nomFile, "r");
 
-	while ((currentChar = fgetc(stdin)) != EOF) {
-		if (((int)prev)< LL && ((int)prev)>LL && ((int)prev1)< LL && ((int)prev1)>64 && (prev2==' ' || prev2=='\'' || prev2=='-') && (((char)i)==' ' || ((char)i)=='.')){
-			mat[((int)prev1)-LL][((int)prev)-LL]++;
+	do {
+		currentChar = fgetc(fileR);
+		if (((int)prev)< LL && ((int)prev)>FL && ((int)prev1)< LL && ((int)prev1)>FL && (prev2==' ' || prev2=='\'' || prev2=='-') && (((char)currentChar)==' ' || ((char)currentChar)=='.')){
+			mat[((int)prev1)-FL][((int)prev)-FL]++;
 		}
 		prev2 = prev1;
 		prev1 = prev;
 		prev = ((char) currentChar);
-	}
+	} while(currentChar != EOF);
 
+	printf("Freq des mots de deux lettres: format de tableau a,b,...,z par a,b,...,z:\n");
+	printf(" ");
+	for(i=0; i<26; i++) {
+		printf(" %c ", i + FL);
+	}
+	printf("\n");
 	for(i=0; i<26; i++){
+		printf("%c", i + FL);
 		for(j=0; j<26; j++){
 			printf(" %d ",mat[i][j]);
 		}
@@ -75,15 +85,15 @@ void doubleLetterFreq(FILE* fileR) {
 * Prends en paramètre un fichier.
 * afficher l'indice de la lettre la plus présente (en general e).
 */
-void freqAnalysis(FILE* fileR) {
-	int currentChar;
+void freqAnalysis(const char* nomFile) {
+	char currentChar;
 	int tabOccurence[26];
 	int sum=0;
 	int highestInd=0;
 	int highestOc=0;
 	int k;
 
-
+	FILE* fileR = fopen(nomFile, "r");
 	for(k=0; k<26;k++) {
 		tabOccurence[k] = 0;
 	}
@@ -112,8 +122,8 @@ void freqAnalysis(FILE* fileR) {
 /*
 * Fonction qui fait une analyse frequentiel 
 */
-void aloneLetterFreq(FILE* fileR) {
-	int currentChar;
+void aloneLetterFreq(const char* nomFile) {
+	char currentChar;
 	int iter[26];
 	char prev = ' ';
 	char prev2 = ' ';
@@ -122,16 +132,17 @@ void aloneLetterFreq(FILE* fileR) {
 	for ( i = 0; i<26; i++){
 		iter[i]=0;
 	}
+	FILE* fileR = fopen(nomFile, "r");
 
 	do {
 		currentChar = fgetc(fileR);
 
-		if(((int) prev) < LL && ((int) prev) > FL && (((char) i) == ' ') && prev2 == ' ') {
+		if(((int) prev) < LL && ((int) prev) > FL && (((char) currentChar) == ' ') && prev2 == ' ') {
 			iter[((int)prev)- FL]++;	
 		}
 
 		prev2 = prev;
-		prev = ((char) i);
+		prev = ((char) currentChar);
 
 	} while(currentChar != EOF);
 
@@ -147,7 +158,7 @@ void aloneLetterFreq(FILE* fileR) {
 	printf("\n");
 }
 
-void letterBeforeQuoteFreq(FILE* fileR) {
+void letterBeforeQuoteFreq(const char* nomFile) {
 	int i;
 	char prev,prev2;
 	prev = ' ';
@@ -158,6 +169,7 @@ void letterBeforeQuoteFreq(FILE* fileR) {
 	for ( i = 0; i<26; i++){
 		iter[i]=0;
 	}
+	FILE* fileR = fopen(nomFile, "r");
 
 	do {
 		currentChar = fgetc(fileR);
@@ -181,22 +193,25 @@ void letterBeforeQuoteFreq(FILE* fileR) {
 	printf("\n");
 }
 
-void twoLetterFreq(FILE* fileR) {
-
-}
-
 int main(int argc, char const *argv[]) {
 	FILE* fileR;
 	FILE* fileW;
-	
+	char currentChar;
+
 	if (argc == 3) {
 
-		fileR = fopen(argv[1], "r");
-		fileW = fopen(argv[2], "w");
+		printf("%s\n",argv[1] );
+		//fileR = fopen(argv[1], "r");
+		//fileW = fopen(argv[2], "w");
 
 		if (fileR != NULL) {
-
-			freqAnalysis(fileR);
+			freqAnalysis(argv[1]);
+			("\nOrdre frequence lettre seule avant apostrophe : T, S, D, J, L, M, C ou N\n");
+			aloneLetterFreq(argv[1]);
+			dualLetterFreq(argv[1]);
+			("\nOrdre frequence lettre des mots de deux lettres: E, M, L, N, F, T et C\n")
+			doubleLetterFreq(argv[1]);
+			letterBeforeQuoteFreq(argv[1]);
 		}
 	} else {
 		printf("USAGE: %s fichier_a_dechiffrer fichier_sortie\n", argv[0]);

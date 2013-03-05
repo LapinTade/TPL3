@@ -1,45 +1,68 @@
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netdb.h>
 #include <netinet/in.h>
+#include <netdb.h>
+#include <time.h>
+#include <sys/stat.h> 
+
+enum {BEGGIN, END, NB_STATE};
+
+int getText(char* txtFile, char* fileName) {
+
+}
+int main(int argc, char *argv[]) {
+
+	if(argc == 3) {
+		int pp,sock,cc;
+		unsigned int from_size;
+		char buffer[1024];
+		struct sockaddr_in serv={AF_INET};
+		struct sockaddr_in from;
+
+		int port = atoi(argv[2]);
+		char* fileName = argv[1];
+
+		serv.sin_port=port; /* numero de port */
+
+		sock=socket(AF_INET,SOCK_DGRAM,0);
+		pp=bind(sock,(struct sockaddr*)&serv,sizeof(serv));
+		printf("serveur pret\n");
+
+		from_size=sizeof(from);
+    	// creation du fichier
+	   	printf("Creation du fichier\n");
+    	FILE* fileW = NULL;
+    	fileW = fopen(fileName, "w");
+		if (fileW != NULL) {
+			char buffer[1024];
+
+			// Envoi du fichier
+	    	printf("Debut du transfert\n");
+
+	    	recvfrom(sock,buffer,sizeof(buffer),0,(struct sockaddr*)&serv, &from_size);
+	    	// Envoi du fichier ligne par ligne en binaire
+	    	while(strcmp(buffer,"dlend") != 0) {
+	    		fputs(buffer, fileW);
+	    		recv(sock, buffer, sizeof(buffer), 0);
+	    	}
+
+	    	// Fin d'envoi
+	    	fclose(fileW);
+			
 
 
-// f1 = open("fichier",o);
-// m = read(f1,buffer,BUFSIZ);
-int main() {
+		} else {
+			fprintf(stderr, "Impossible d'ouvrir le fichier: %s\n", fileName);
+		}
 
-	char mess_recu[128], mess_envoi[128];
-	int  pp,d_sock,cc;
-	unsigned int from_size;
-	char tab[128];
-	struct sockaddr_in serv={AF_INET};
-	struct sockaddr_in from;
+	    //fermeture de la socket
+	    close(sock);
 
-	serv.sin_port=2000; /* numero de port */
-
-	d_sock=socket(AF_INET,SOCK_DGRAM,0);
-	pp=bind(d_sock,(struct sockaddr*)&serv,sizeof(serv));
-   	printf("serveur pret\n");
-
-	from_size=sizeof(from);
-
-	/* reception du tableau du  client */
-	cc=recvfrom(d_sock,mess_recu,sizeof(mess_recu),0,(struct sockaddr*)&from,
-	         &from_size);
-	printf("le serveur a recu : %s\n",mess_recu);
-
-
-	/*  envoi du tableau au client*/
-	mess_envoi[0]='B';
-	mess_envoi[1]='I';
-	mess_envoi[2]='C';
-	mess_envoi[3]='\0';
-	cc=sendto(d_sock,mess_envoi,sizeof(mess_envoi),0,(struct sockaddr*)&from,
-	             sizeof(from));
-
-	printf("le  serveur a  envoye au client: %s\n",mess_envoi);
-
-
+    	return 0;
+	} else {
+		printf("USAGE: %s Nom_fichier_a_recevoir port\n", argv[0]);
+	}
 }
