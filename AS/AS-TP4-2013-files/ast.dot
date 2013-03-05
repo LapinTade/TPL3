@@ -1,0 +1,21 @@
+digraph AST {
+node [shape="box",style="filled",fillcolor="cornsilk"]9 [label="if"]
+9 -> 0
+9 -> 8
+0 [label="v:c1"]
+8 [label="if else"]
+8 -> 1
+8 -> 4
+8 -> 7
+1 [label="v:c2"]
+4 [label=":="]
+4 -> 2
+4 -> 3
+2 [label="v:s"]
+3 [label="i:1"]
+7 [label=":="]
+7 -> 5
+7 -> 6
+5 [label="v:s"]
+6 [label="i:2"]
+}

@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE sf-1 SYSTEM "sf-1.dtd">
+
+<sf-1>
+
+  <entries>
+
+    <book id="beahm1996" xml:lang="fr">
+      <author><personrefs to="beahm"/></author>
+      <title>
+        Tout sur <foreigngroup xml:lang="en">Stephen King</foreigngroup>
+      </title>
+      <publisher>Lefrancq</publisher>
+      <year>1996</year>
+      <translated-by from="en"><personrefs to="corthouts"/></translated-by>
+    </book>
+
+    <book id="bachman1982" xml:lang="en">
+      <author><personrefs to="bachman"/></author>
+      <title><skippable>The </skippable>Running Man</title>
+      <publisher>New American Library</publisher>
+      <year>1982</year>
+      <month><may/></month>
+    </book>
+
+    <book id="bisson1995" xml:lang="en">
+      <author><personrefs to="bisson"/></author>
+      <title>Johnny Mnemonic</title>
+      <publisher>Simon &amp; Shuster, Inc.</publisher>
+      <year>1995</year>
+      <note>
+        Based on a short story and screenplay by <personrefs to="gibson"/>
+      </note>
+    </book>
+
+    <book id="duncan1999" xml:lang="en">
+      <author><personrefs to="duncan"/></author>
+      <title>I Know What You Did Last Summer</title>
+      <publisher>Dell</publisher>
+      <year>1999</year>
+      <month><jul/></month>
+      <note>
+        <nonemptyinformation>
+          <group xml:lang="en">
+            Film adaptation directed by <personrefs to="moritz"/>
+          </group>
+          <group xml:lang="fr">
+            Adapté au cinéma sous le titre :
+            <emph quotedf="yes">Souviens-toi, l'été dernier</emph>
+          </group>
+        </nonemptyinformation>
+      </note>
+    </book>
+
+    <inproceedings id="egan2001" xml:lang="en">
+      <author><personrefs to="egan"/></author>
+      <title>Oracle</title>
+      <booktitle>
+        <skippable>The </skippable>Mammoth Book of Best New SF
+      </booktitle>
+      <editor><personrefs to="dozois"/></editor>
+      <publisher>Robinson</publisher>
+      <year>2001</year>
+      <volume>14</volume>
+      <address>London</address>
+      <pages><firstpage>465</firstpage><lastpage>504</lastpage></pages>
+    </inproceedings>
+
+    <book id="eschbach1999" xml:lang="de">
+      <author><personrefs to="eschbach"/></author>
+      <title>Kelwitts Stern</title>
+      <publisher>Bastei Lubbe</publisher>
+      <year>1999</year>
+      <month><jun/></month>
+    </book>
+
+    <inproceedings id="eschbach2000" xml:lang="de">
+      <author><personrefs to="eschbach"/></author>
+      <title><skippable>Der </skippable>Alptraummann</title>
+      <booktitle>Destination 3001</booktitle>
+      <editor><personrefs to="chambon silverberg"/></editor>
+      <publisher>Tor</publisher>
+      <year>2000</year>
+    </inproceedings>
+
+    <book id="eschbach2001" xml:lang="de">
+      <author><personrefs to="eschbach"/></author>
+      <title>Solar Station</title>
+      <publisher>Bastei Lubbe</publisher>
+      <year>2001</year>
+      <month><jan/></month>
+    </book>
+
+    <book id="gibson1984" xml:lang="en">
+      <author><personrefs to="gibson"/></author>
+      <title>Neuromancer</title>
+      <publisher>Victor Gollancz, Ltd.</publisher>
+      <year>1984</year>
+    </book>
+
+    <book id="gibson1986" xml:lang="en">
+      <author><personrefs to="gibson"/></author>
+      <title>Burning Chrome and Other Stories</title>
+      <publisher>Victor Gollancz, Ltd.</publisher>
+      <year>1986</year>
+      <note>
+        <group xml:lang="fr">
+          Titre de la traduction française :
+          <emph emf="no" quotedf="yes">Gravé sur chrome</emph>
+        </group>
+        <group xml:lang="de">
+          Titel der deutschen Übersetzung:
+          <emph emf="no" quotedf="yes">Cyberspace</emph>
+        </group>
+      </note>
+    </book>
+
+    <book id="gibson1988" xml:lang="en">
+      <author><personrefs to="gibson"/></author>
+      <title>Mona Lisa Overdrive</title>
+      <publisher>Victor Gollancz, Ltd.</publisher>
+      <year>1988</year>
+    </book>
+
+    <book id="holbein1997" xml:lang="de">
+      <editor><personrefs to="holbein"/></editor>
+      <title>Dinoland</title>
+      <publisher>Bastei Lubbe</publisher>
+      <year>1997</year>
+      <month><aug/></month>
+    </book>
+
+    <book id="honaker1991" xml:lang="fr">
+      <author><personrefs to="honaker"/></author>
+      <title>
+        <foreigngroup xml:lang="en">Apocalypse Junction</foreigngroup>
+      </title>
+      <publisher>Fleuve Noir, no. 1810</publisher>
+      <year>1991</year>
+      <month><apr/></month>
+      <number>8</number>
+      <series>Le Commandeur</series>
+    </book>
+
+    <book id="king1978f" xml:lang="en">
+      <author><personrefs to="king"/></author>
+      <title>Night Shift</title>
+      <publisher>Doubleday &amp; Co.</publisher>
+      <year>1978</year>
+      <note>
+        <nonemptyinformation>
+          <group xml:lang="en">Collection of 20 short stories</group>
+          <group xml:lang="fr">Recueil de 20 nouvelles</group>
+        </nonemptyinformation>
+        <nonemptyinformation>
+          <group xml:lang="en"/>
+          <group xml:lang="fr">
+            Titre de la traduction française : Danse macabre
+          </group>
+          <group xml:lang="de">
+            Titel der deutschen Übersetzung: Nachtschicht
+          </group>
+        </nonemptyinformation>
+      </note>
+    </book>
+
+    <book id="king1981i" xml:lang="en">
+      <author><personrefs to="king"/></author>
+      <title><foreigngroup xml:lang="fr">Danse macabre</foreigngroup></title>
+      <publisher>Everest House</publisher>
+      <year>1981</year>
+      <month><jul/></month>
+    </book>
+
+    <book id="king1990" xml:lang="en">
+      <author><personrefs to="king"/></author>
+      <title><skippable>The </skippable>Stand</title>
+      <publisher>Doubleday &amp; Co.</publisher>
+      <year>1990</year>
+      <address>New-York</address>
+      <note>
+        <nonemptyinformation>
+          <group xml:lang="en">The Complete and Uncut Edition.</group>
+          <group xml:lang="fr">Version intégrale.</group>
+        </nonemptyinformation>
+        <nonemptyinformation>
+          <group xml:lang="en">Abridged version issued in 1978</group>
+          <group xml:lang="fr">Version abrégée parue en 1978</group>
+          <group xml:lang="de">
+            Abgekürzte Auffassung im Jahre 1978 erschienen
+          </group>
+        </nonemptyinformation>
+      </note>
+    </book>
+
+    <book id="king1998d" xml:lang="en">
+      <author><personrefs to="king"/></author>
+      <title>Bag of Bones</title>
+      <publisher>
+        <nonemptyinformation>
+          <group xml:lang="en">Scribner Book Company</group>
+          <group xml:lang="fr">Première édition américaine</group>
+        </nonemptyinformation>
+      </publisher>
+      <year>1998</year>
+      <month><sep/></month>
+      <note>
+        <nonemptyinformation>
+          <group xml:lang="en">Translated into French and German</group>
+          <group xml:lang="fr">
+            Titre de la traduction française : Sac d'os
+          </group>
+          <group xml:lang="de">Titel der deutschen Übersetzung: Sara</group>
+        </nonemptyinformation>
+      </note>
+    </book>
+
+    <book id="lem1961" xml:lang="pl">
+      <author><personrefs to="lem"/></author>
+      <title>Solaris</title>
+      <publisher>Wydawnictwo ministerwa Obrony Narodowej</publisher>
+      <year>1961</year>
+      <note><group xml:lang="fr">Traduit en français</group></note>
+    </book>
+
+    <book id="lem1968" xml:lang="pl">
+      <author><personrefs to="lem"/></author>
+      <title>Glos Pana</title>
+      <publisher>Czytelnik</publisher>
+      <year>1968</year>
+      <address>
+        <nonemptyinformation>
+          <group xml:lang="pl">Warszawa</group>
+          <group xml:lang="en">Warsaw</group>
+          <group xml:lang="de">Warschau</group>
+          <group xml:lang="fr">Varsovie</group>
+        </nonemptyinformation>
+      </address>
+      <note>
+        <group xml:lang="pl">
+          Titre de la traduction française : 
+          <emph quotedf="yes">La voix du maître</emph>
+        </group>
+      </note>
+    </book>
+
+    <book id="moorcock1971" xml:lang="en">
+      <author><personrefs to="moorcock"/></author>
+      <title><skippable>The </skippable>Sleeping Sorceress</title>
+      <publisher>New En Library</publisher>
+      <year>1971</year>
+      <month><sep/></month>
+      <note>
+        <group xml:lang="en">
+          Retitled <emph quotedf="yes">The Vanishing Tower</emph> in 1977
+        </group>
+        <group xml:lang="fr">
+          Titre de la traduction française :
+          <emph quotedf="yes">La sorcière dormante</emph>
+        </group>
+        <group xml:lang="de">
+          Titel der deutschen Übersetzung:
+          <emph quotedf="yes">Der verzauberte Turm</emph>
+        </group>
+      </note>
+    </book>
+
+    <book id="robeson1967" xml:lang="en">
+      <author><personrefs to="robeson"/></author>
+      <title>Murder Melody</title>
+      <publisher>Bantam</publisher>
+      <year>1967</year>
+      <month><jan/></month>
+      <number>15</number>
+      <series>Doc Savage Series</series>
+      <note>
+        Originally published in <emph quotedf="yes">Doc Savage Magazine</emph>
+        <group xml:lang="fr">
+          Titre de la traduction française :
+          <emph quotedf="yes">La mélodie de la mort</emph>
+        </group>
+        <group xml:lang="de">
+          Titel der deutschen Übersetzung: 
+          <emph quotedf="yes">Invasion aus der Tiefe</emph>
+        </group>
+      </note>
+    </book>
+
+    <book id="robeson1968i" xml:lang="en">
+      <author><personrefs to="robeson"/></author>
+      <title><skippable>The </skippable>Flaming Falcons</title>
+      <publisher>Bantam</publisher>
+      <year>1968</year>
+      <month><nov/></month>
+      <number>30</number>
+      <series>Doc Savage Series</series>
+      <note>
+        <nonemptyinformation>
+          <group xml:lang="fr">Première édition en juin 1939 dans</group>
+          <group xml:lang="en">Originally published June 1939 in</group>
+        </nonemptyinformation>
+        <emph emf="no" quotedf="yes">Doc Savage Magazine</emph>
+      </note>
+    </book>
+
+    <book id="souvestre-allain1912" xml:lang="fr">
+      <author><personrefs to="souvestre allain"/></author>
+      <title><skippable>Le </skippable>policier apache</title>
+      <publisher>Fayard</publisher>
+      <year>1912</year>
+      <number>6</number>
+      <series>Fantômas</series>
+    </book>
+
+    <inproceedings id="thys1997" xml:lang="de">
+      <author><personrefs to="thys"/></author>
+      <title><skippable>Auf der </skippable>Spur des Vernichters</title>
+      <booktitle>Dinoland</booktitle>
+      <editor><personrefs to="holbein"/></editor>
+      <publisher>Bastei Lubbe</publisher>
+      <year>1997</year>
+      <month><aug/></month>
+      <pages><firstpage>353</firstpage><lastpage>437</lastpage></pages>
+    </inproceedings>
+
+    <inproceedings id="walther1999" xml:lang="fr">
+      <author><personrefs to="walther"/></author>
+      <title>Nuit rouge à Mayerling</title>
+      <booktitle>Futurs antérieurs</booktitle>
+      <editor><personrefs to="riche"/></editor>
+      <publisher>Fleuve Noir</publisher>
+      <year>1999</year>
+      <pages><firstpage>27</firstpage><lastpage>68</lastpage></pages>
+    </inproceedings>
+
+  </entries>
+
+  <persons>
+
+    <personname key="allain" born="1885" dead="1969">
+      <first>Marcel</first><last>Allain</last>
+    </personname>
+
+    <personname key="bachman">
+      <first>Richard</first>
+      <last>Bachman</last>
+      <pseudonym-of><personrefs to="king"/></pseudonym-of>
+    </personname>
+
+    <personname key="beahm">
+      <first>George</first><last>Beahm</last>
+    </personname>
+
+    <personname key="bisson" born="1942">
+      <first>Terry</first><last>Bisson</last>
+    </personname>
+
+    <personname key="corthouts" born="1970">
+      <first>Christophe</first><last>Corthouts</last>
+    </personname>
+
+    <personname key="chambon" born="1942" dead="2003">
+      <first>Jacques</first><last>Chambon</last>
+    </personname>
+
+    <personname key="dent" born="1904" dead="1959">
+      <first>Lester</first><last>Dent</last>
+    </personname>
+
+    <personname key="dozois" born="1947">
+      <first>Gardner</first><middle>Raymond</middle><last>Dozois</last>
+    </personname>
+
+    <personname key="duncan">
+      <first>Lois</first>
+      <last>Duncan</last>
+      <pseudonym-of><personrefs to="edwards"/></pseudonym-of>
+    </personname>
+
+    <personname key="edwards">
+      <first>Margaret</first><middle>A.</middle><last>Edwards</last>
+    </personname>
+
+    <personname key="egan" born="1961">
+      <first>Greg</first><last>Egan</last>
+    </personname>
+
+    <personname key="eschbach" born="1959">
+      <first>Andreas</first><last>Eschbach</last>
+    </personname>
+
+    <personname key="gibson" born="1948">
+      <first>William</first><last>Gibson</last>
+    </personname>
+
+    <personname key="hathway">
+      <first>Alan</first><last>Hathway</last>
+    </personname>
+
+    <personname key="holbein" born="1953">
+      <first>Wolfgang</first><last>Holbein</last>
+    </personname>
+
+    <personname key="honaker" born="1958">
+      <first>Michel</first><last>Honaker</last>
+    </personname>
+
+    <personname key="king" born="1947">
+      <first>Stephen</first><middle>Edwin</middle><last>King</last>
+    </personname>
+
+    <personname key="lem" born="1921">
+      <first>Stanislas</first><last>Lem</last>
+    </personname>
+
+    <personname key="moorcock" born="1939">
+      <first>Michael</first><last>Moorcock</last>
+    </personname>
+
+    <personname key="moritz" born="1959">
+      <first>Neal</first><middle>H.</middle><last>Moritz</last>
+    </personname>
+
+    <personname key="rehfeld">
+      <first>Frank</first><last>Rehfeld</last>
+    </personname>
+
+    <personname key="riche">
+      <first>Daniel</first><last>Riche</last>
+    </personname>
+
+    <personname key="robeson">
+      <first>Kenneth</first>
+      <last>Robeson</last>
+      <pseudonym-of>
+        <personrefs to="dent hathway"/><and-others/>
+      </pseudonym-of>
+    </personname>
+
+    <personname key="silverberg" born="1935">
+      <first>Robert</first><middle>E.</middle><last>Silverberg</last>
+    </personname>
+
+    <personname key="souvestre" born="1874" dead="1914">
+      <first>Pierre</first><last>Souvestre</last>
+    </personname>
+
+    <personname key="thys">
+      <first>Frank</first>
+      <last>Thys</last>
+      <pseudonym-of><personrefs to="rehfeld"/></pseudonym-of>
+    </personname>
+
+    <personname key="walther" born="1940">
+      <first>Daniel</first>
+      <last>Walther</last>
+    </personname>
+
+  </persons>
+
+</sf-1>

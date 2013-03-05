@@ -1,0 +1,14 @@
+question 5 :
+
+on a x1...xn les opérateurs et a1...an leurs associativités et op les operateurs en toutes lettres (ex : TIMES, PLUS).
+
+Pour i allant de 1 a n-1, faire :
+	si ai = 'l' faire
+		xi : x(i+1) | xi opi x(i+1)
+	sinon faire
+		xi : x(i+1) | x(i+1) opi xi
+	fsi
+fpour
+
+
+

@@ -1,0 +1,12 @@
+digraph G {
+orientation = landscape;
+rankdir = LR;
+ratio = compress;
+nt0 [ label="start'" ] ;
+nt1 [ label="start" ] ;
+nt2 [ label="int_plus_right" ] ;
+nt0 -> nt1 [ label="" ] ;
+nt1 -> nt2 [ label="" ] ;
+nt2 -> nt2 [ label="" ] ;
+
+}

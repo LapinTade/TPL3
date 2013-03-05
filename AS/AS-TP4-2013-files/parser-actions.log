@@ -1,0 +1,76 @@
+Lookahead token is now IF (253-255)
+State 0:
+Shifting (IF) to state 49
+State 49:
+Lookahead token is now VAR (256-258)
+Shifting (VAR) to state 2
+State 2:
+Lookahead token is now IF (259-261)
+Reducing production expr -> VAR 
+State 50:
+Shifting (IF) to state 49
+State 49:
+Lookahead token is now VAR (262-264)
+Shifting (VAR) to state 2
+State 2:
+Lookahead token is now VAR (265-266)
+Reducing production expr -> VAR 
+State 50:
+Shifting (VAR) to state 45
+State 45:
+Lookahead token is now ASSIGN (266-267)
+Reducing production assignable -> VAR 
+State 62:
+Shifting (ASSIGN) to state 69
+State 69:
+Lookahead token is now INT (267-268)
+Shifting (INT) to state 8
+State 8:
+Lookahead token is now PV (268-269)
+Reducing production expr -> INT 
+State 70:
+Reducing production stmt -> assignable ASSIGN expr 
+State 75:
+Shifting (PV) to state 76
+State 76:
+Lookahead token is now ELSE (270-274)
+Reducing production terminated_stmt -> stmt PV 
+State 87:
+Shifting (ELSE) to state 88
+State 88:
+Lookahead token is now VAR (275-276)
+Shifting (VAR) to state 45
+State 45:
+Lookahead token is now ASSIGN (276-277)
+Reducing production assignable -> VAR 
+State 62:
+Shifting (ASSIGN) to state 69
+State 69:
+Lookahead token is now INT (277-278)
+Shifting (INT) to state 8
+State 8:
+Lookahead token is now PV (278-279)
+Reducing production expr -> INT 
+State 70:
+Reducing production stmt -> assignable ASSIGN expr 
+State 75:
+Shifting (PV) to state 76
+State 76:
+Lookahead token is now EOF (281-281)
+Reducing production terminated_stmt -> stmt PV 
+State 89:
+Reducing production ifelse -> IF expr terminated_stmt ELSE terminated_stmt 
+State 77:
+Reducing production terminated_stmt -> ifelse 
+State 87:
+Reducing production ifelse -> IF expr terminated_stmt 
+State 77:
+Reducing production terminated_stmt -> ifelse 
+State 95:
+Reducing production start2 -> terminated_stmt 
+State 97:
+Shifting (EOF) to state 98
+State 98:
+Reducing production start -> start2 EOF 
+State 99:
+Accepting

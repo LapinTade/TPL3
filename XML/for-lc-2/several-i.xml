@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--  Exemple d'utilisation d'"XInclude".Attention ! il faut répéter la
+      déclaration de l'élément "poemefr0", car cet élément n'est pas reconnu
+      par la seule déclaration "ATTLIST poemefr0 ...", visant à lui ajouter
+      l'attribut portant l'espace de noms d'"XInclude". Rappelons en outre que
+      cet ajout de définitions locales pour les attributs de la forme
+      "xmlns:..." est inutile si le texte est décrit au moyen d'un schéma.
+  -->
+
+<!DOCTYPE poemefr0 SYSTEM "poemefr0.dtd"
+  [<!ELEMENT poemefr0  (preambule,corps)>
+   <!ATTLIST poemefr0  xmlns:xi CDATA #IMPLIED>]>
+
+<poemefr0 xmlns:xi="http://www.w3.org/2001/XInclude">
+  <preambule>
+    <titre>Chanson d'automne</titre>
+    <recueil>Poèmes saturniens</recueil>
+    <date>1866</date>
+    <auteur>
+      <prenom>Paul</prenom>
+      <nom>Verlaine</nom>
+      <naissance>1844</naissance>
+      <deces>1896</deces>
+    </auteur>
+  </preambule>
+  <corps>
+    <xi:include href="several-1.xml"/>
+    <xi:include href="several-2.xml"/>
+    <strophe>
+      <ligne>Tout suffocant,</ligne>
+      <ligne>Et blême, quand</ligne>
+      <ligne><r/>Sonne l'heure,</ligne>
+    </strophe>
+    <strophe>
+      <ligne>Je me souviens</ligne>
+      <ligne>Des jours anciens</ligne>
+      <ligne><r/>Et je pleure ;</ligne>
+    </strophe>
+    <strophe>
+      <ligne>Et je m'en vais</ligne>
+      <ligne>Au vent mauvais</ligne>
+      <ligne><r/>Qui m'emporte</ligne>
+    </strophe>
+    <strophe>
+      <ligne>Deça, delà,</ligne>
+      <ligne>Pareil à la</ligne>
+      <ligne><r/>Feuille morte.</ligne>
+    </strophe>
+  </corps>
+</poemefr0>

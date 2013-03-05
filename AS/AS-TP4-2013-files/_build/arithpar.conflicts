@@ -1,0 +1,86 @@
+
+** Conflict (shift/reduce) in state 87.
+** Token involved: ELSE
+** This state is reached from start after reading:
+
+IF expr IF expr terminated_stmt 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF 
+terminated_stmt 
+ifelse 
+(?)
+
+** In state 87, looking ahead at ELSE, shifting is permitted
+** because of the following sub-derivation:
+
+IF expr terminated_stmt ELSE terminated_stmt 
+        ifelse 
+        IF expr terminated_stmt . ELSE terminated_stmt 
+
+** In state 87, looking ahead at ELSE, reducing production
+** ifelse -> IF expr terminated_stmt 
+** is permitted because of the following sub-derivation:
+
+IF expr terminated_stmt ELSE terminated_stmt // lookahead token appears
+        ifelse // lookahead token is inherited
+        IF expr terminated_stmt . 
+
+** Conflict (reduce/reduce) in state 57.
+** Tokens involved: WHILE EOF ELSE
+** The following explanations concentrate on token EOF.
+** This state is reached from start after reading:
+
+ACOPEN stmts ACOFER 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF // lookahead token appears
+terminated_stmt // lookahead token is inherited
+(?)
+
+** In state 57, looking ahead at EOF, reducing production
+** bloc -> ACOPEN stmts ACOFER 
+** is permitted because of the following sub-derivation:
+
+bloc // lookahead token is inherited
+ACOPEN stmts ACOFER . 
+
+** In state 57, looking ahead at EOF, reducing production
+** terminated_stmt -> ACOPEN stmts ACOFER 
+** is permitted because of the following sub-derivation:
+
+ACOPEN stmts ACOFER . 
+
+** Conflict (shift/reduce) in state 38.
+** Tokens involved: TIMES PLUS PIN OR NEQ MINUS LT LEQ GT GEQ EQ DIVIDE AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from start after reading:
+
+expr PIN expr DP expr 
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+start 
+start2 EOF 
+expr 
+(?)
+
+** In state 38, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+expr PIN expr DP expr 
+                 expr . TIMES expr 
+
+** In state 38, looking ahead at TIMES, reducing production
+** expr -> expr PIN expr DP expr 
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+expr PIN expr DP expr . 

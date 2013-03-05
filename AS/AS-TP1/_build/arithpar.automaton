@@ -1,0 +1,33 @@
+State 0:
+start' -> . start [ # ]
+-- On INT shift to state 1
+-- On start shift to state 4
+-- On int_plus_right shift to state 5
+
+State 1:
+int_plus_right -> INT . [ EOF ]
+int_plus_right -> INT . PLUS int_plus_right [ EOF ]
+-- On PLUS shift to state 2
+-- On EOF reduce production int_plus_right -> INT 
+
+State 2:
+int_plus_right -> INT PLUS . int_plus_right [ EOF ]
+-- On INT shift to state 1
+-- On int_plus_right shift to state 3
+
+State 3:
+int_plus_right -> INT PLUS int_plus_right . [ EOF ]
+-- On EOF reduce production int_plus_right -> INT PLUS int_plus_right 
+
+State 4:
+start' -> start . [ # ]
+-- On # accept start
+
+State 5:
+start -> int_plus_right . EOF [ # ]
+-- On EOF shift to state 6
+
+State 6:
+start -> int_plus_right EOF . [ # ]
+-- On # reduce production start -> int_plus_right EOF 
+

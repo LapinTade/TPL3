@@ -1,0 +1,23 @@
+digraph AST {
+node [shape="box",style="filled",fillcolor="cornsilk"]10 [label="+"]
+10 -> 0
+10 -> 9
+0 [label="i:1"]
+9 [label="+"]
+9 -> 1
+9 -> 8
+1 [label="i:2"]
+8 [label="+"]
+8 -> 2
+8 -> 7
+2 [label="i:3"]
+7 [label="+"]
+7 -> 3
+7 -> 6
+3 [label="i:4"]
+6 [label="+"]
+6 -> 4
+6 -> 5
+4 [label="i:5"]
+5 [label="i:6"]
+}

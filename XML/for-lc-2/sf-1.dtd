@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--  Parameter entities.  -->
+
+<!ENTITY % INTEGER           "(#PCDATA)">
+<!ENTITY % INTEGER-A         "CDATA">
+<!ENTITY % STRING            "#PCDATA | personrefs | emph">
+<!ENTITY % STRING-PLUS       "%STRING; | foreigngroup">
+<!ENTITY % STRING-PLUS-PLUS  "%STRING-PLUS; | nonemptyinformation">
+
+<!ENTITY % id.attribute      "id       ID      #REQUIRED">
+<!ENTITY % lang.attribute    "xml:lang NMTOKEN 'en'">
+<!ENTITY % basic.attributes  "%id.attribute; %lang.attribute;">
+
+<!--  Elements and their attributes.  -->
+
+<!ELEMENT sf-1     (entries,persons)>
+<!ELEMENT entries  (book | inproceedings)*>
+
+<!ELEMENT book           ((author | editor),title,publisher,year,month?,
+                          (volume | number)?,series?,address?,edition?,
+                          translated-by?,note?)>
+<!ELEMENT inproceedings  (author,title,booktitle,editor?,organization?,
+                          publisher?,year?,month?,volume?,number?,series?,
+                          address?,pages?,translated-by?,note?)>
+<!ATTLIST book           %basic.attributes;>
+<!ATTLIST inproceedings  %basic.attributes;>
+
+<!ELEMENT author         (personrefs)>
+<!ELEMENT editor         (personrefs)>
+<!ELEMENT personrefs     EMPTY>
+<!ELEMENT and-others     EMPTY>
+<!ELEMENT translated-by  (personrefs,and-others?)>
+<!ATTLIST personrefs     to   IDREFS  #REQUIRED>
+<!ATTLIST translated-by  from NMTOKEN #REQUIRED>
+
+<!ELEMENT year   %INTEGER;>
+<!ELEMENT month  (jan | feb | mar | apr | may | jun | jul | aug | sep | oct |
+                  nov | dec)>
+<!ELEMENT jan    EMPTY>
+<!ELEMENT feb    EMPTY>
+<!ELEMENT mar    EMPTY>
+<!ELEMENT apr    EMPTY>
+<!ELEMENT may    EMPTY>
+<!ELEMENT jun    EMPTY>
+<!ELEMENT jul    EMPTY>
+<!ELEMENT aug    EMPTY>
+<!ELEMENT sep    EMPTY>
+<!ELEMENT oct    EMPTY>
+<!ELEMENT nov    EMPTY>
+<!ELEMENT dec    EMPTY>
+
+<!ELEMENT title      (%STRING-PLUS; | skippable)*>
+<!ELEMENT booktitle  (%STRING-PLUS; | skippable)*>
+<!ELEMENT emph       (#PCDATA)>
+<!ATTLIST emph       bff     (yes | no) "no" 
+                     emf     (yes | no) "yes"
+                     itf     (yes | no) "no"
+                     quotedf (yes | no) "no"
+                     scf     (yes | no) "no"
+                     sff     (yes | no) "no"
+                     slf     (yes | no) "no"
+                     ttf     (yes | no) "no">
+<!ELEMENT skippable  (#PCDATA)>
+
+<!ELEMENT note                 (%STRING-PLUS-PLUS; | group)*>
+<!ELEMENT nonemptyinformation  (group+)>
+<!ELEMENT group                (%STRING;)*>
+<!ELEMENT foreigngroup         (%STRING;)*>
+<!ATTLIST group                %lang.attribute;>
+<!ATTLIST foreigngroup         %lang.attribute;>
+
+<!ELEMENT pages          (firstpage,(and-following | lastpage | otherpages)?)>
+<!ELEMENT firstpage      %INTEGER;>
+<!ELEMENT lastpage       %INTEGER;>
+<!ELEMENT otherpages     (pagenumber+)>
+<!ELEMENT pagenumber     %INTEGER;>
+<!ELEMENT and-following  EMPTY>
+<!ELEMENT number         (#PCDATA)>
+<!ELEMENT volume         (#PCDATA)>
+
+<!ELEMENT address       (%STRING-PLUS-PLUS;)*>
+<!ELEMENT edition       (%STRING-PLUS-PLUS;)*>
+<!ELEMENT organization  (%STRING-PLUS-PLUS;)*>
+<!ELEMENT publisher     (%STRING-PLUS-PLUS;)*>
+<!ELEMENT series        (%STRING-PLUS-PLUS;)*>
+
+<!ELEMENT persons       (personname*)>
+<!ELEMENT personname    (first?,middle?,von?,last,junior?,pseudonym-of?)>
+<!ELEMENT first         (#PCDATA)>
+<!ELEMENT von           (#PCDATA)>
+<!ELEMENT middle        (#PCDATA)>
+<!ELEMENT last          (#PCDATA)>
+<!ELEMENT junior        EMPTY>
+<!ELEMENT pseudonym-of  (personrefs,and-others?)>
+<!ATTLIST personname    key  ID          #REQUIRED
+                        born %INTEGER-A; #IMPLIED
+                        dead %INTEGER-A; #IMPLIED>
