@@ -1,0 +1,238 @@
+ROZE Nicolas
+UNKNOWN Inconnu
+
+////////
+//      4) Constantes, affectations & instructions
+///////
+
+//////
+// -1
+//////
+arithAST.ml
+	type t =
+    | True
+    | False
+
+    let rec dot = function //ajout dans la fonction
+	| True -> Dot.N("#t",[])
+ 	| False -> Dot.N("#f",[])
+
+arithlex.mll //on ajoute les booleens dans le lexer
+	|"true"            	{ TRUE }
+	|"false"        	{ FALSE }
+
+arithpar.mly
+		%token EOF //declaration
+		FALSE TRUE
+
+		expr:
+		| t=TRUE		{ True } // On ajoute les booleens dans les expressions existantes
+		| f=FALSE		{ False }
+
+//////
+// -2
+//////
+
+arithAST.ml	
+	type t =
+	| Index of string * t
+
+	let rec dot = function
+	| Index (id,x) -> Dot.N(id^"[.]",[dot x])
+
+
+arithlex.mll //on ajoute les craochet dans le lexer
+	| "["                   { OPEN_S_BRACKET }
+	| "]"                   { CLOSE_S_BRACKET }
+
+
+arithpar.mly
+	%token EOF //declaration
+	OPEN_S_BRACKET CLOSE_S_BRACKET
+
+	start: start2 EOF { $1 }
+	start2: // On a soit une expression soit un tableau
+	|expr {$1}
+	|tab {$1}
+	
+	tab: // Lorsque l'on a un tableau, on a un [ et ] entourant une expression, ex: tab[i+2]
+	| v=VAR OPEN_S_BRACKET t=expr CLOSE_S_BRACKET { Index(v,t) } //tableau
+
+//////
+// -3
+//////
+
+arithlex.mll									//On ajoute les parentheses dans le lexer
+	| "("                   { OPEN_BRACKET }
+	| ")"                   { CLOSE_BRACKET }
+
+arithpar.mly
+	%token EOF //declaration
+	OPEN_BRACKET CLOSE_BRACKET
+
+	expr: // Une expression avec parentheses est faites comme suit: ( expr )
+	| OPEN_BRACKET t=expr CLOSE_BRACKET     {t} // Le tout est conciderer comme une expression
+		
+//////
+// -4
+//////
+
+arithAST.ml
+	type t =
+    | Assign of t * t
+	
+	let rec dot = function // L'assignation contient deux [liste d'] elements, gauche et droit. 
+    | Assign (l,r) -> Dot.N (":=", [dot l; dot r])
+
+arithlex.mll
+    | ":="            		{ ASSIGN }
+
+
+arithpar.mly
+	%token EOF //declaration
+	ASSIGN
+
+    start2:
+    |affect {$1}    // On a soit une expression ( +, -, ...) soit une affectation (avec :=)
+    |expr {$1}
+
+    affect:
+    | a=assignable ASSIGN t=expr 	{ Assign (a, t) }   // L'assignation se fait avec un element assignable et une expression
+
+    expr:
+    | a=assignable          { a }
+
+	assignable:
+	| v=tab { v }   // On peut assigné une valeur a un tableau
+	| v=VAR { v }   // On assigne generamelent une valeur a une variable
+			
+//////
+// -5
+//////
+
+    Pseudo Code
+
+    On a x1...xn les opérateurs et a1...an leurs associativités et op
+    les operateurs en toutes lettres (ex : TIMES, PLUS).
+
+    Pour i allant de 1 a n-1, faire :
+	    si ai = 'l' faire
+		    xi : x(i+1) | xi opi x(i+1)
+	    sinon faire	
+		    xi : x(i+1) | x(i+1) opi xi
+	    fsi
+    fpour
+
+////////
+//       5) Blocs d’instructions, opérateurs postﬁxés, boucles
+///////
+
+//////
+// -1
+//////
+
+arithAST.ml
+    type t =
+    | Stmts of t list
+    
+    let rec dot =
+	| Stmts (l) -> Dot.N (";",map dot l)
+	
+arithlex.mll // Ajout du ; dans le lexer
+	| ";"                   { PV }
+
+arithpar.mly									*
+	%token EOF
+	FINAL
+	
+	start2:
+	|stmts {$1}
+	|assign {$1}
+	|expr {$1}
+	|tab {$1}
+
+	stmts:
+	| l=stmts_inner        {Stmts l}
+
+    // Recursivité à droite pour les expressions avec ; (qui n'est pas prioritaire)
+	expr_inner:
+	| { [] }
+	| s=assign FINAL r=expr_inner { s::r }
+	
+	
+//////
+// -2
+//////
+
+arithlex.mll
+    | "++"            		{ INCREMENT }
+    | "+="            		{ ADD }
+    | "--"					{ DECREMENT }
+    | "-="					{ MIN }
+
+arithpar.mly
+    %token EOF
+    FINAL INCREMENT DECREMENT ADD MIN
+    
+    // Les opérations se font sur un element assignable [et des expression]
+    affect:
+    | a=assignable INCREMENT 		{ Assign (a, Bin (Plus, a, Int 1)) }
+    | a=assignable DECREMENT 		{ Assign (a, Bin (Minus, a, Int 1)) }
+    | a=assignable ADD t=expr 		{ Assign (a, Bin (Plus, a, t)) }
+    | a=assignable MIN t=expr 		{ Assign (a, Bin (Plus, a, t)) }
+    
+    	
+//////
+// -3
+//////
+
+arithlex.mll
+    | "{"                   { OPEN_CURLY_BRACKET }
+    | "}"                   { CLOSE_CURLY_BRACKET }
+    
+arithpar.mly
+    %token EOF
+    OPEN_CURLY_BRACKET CLOSE_CURLY_BRACKET
+    
+    // On ajoute les blocs d'instructions
+    affect:
+    b=bloc         { b }
+    
+    // Les { } s'appliquent sur des blocs d'expressions
+    // On définit alors ce qu'est un bloc
+    bloc:
+    | OPEN_CURLY_BRACKET s=expr CLOSE_CURLY_BRACKET     { s }
+    
+        	
+//////
+// -4
+//////
+
+arithAST.ml
+	type t =
+	| While of t * t
+
+    // Un while se définit par une liste d'élements entre (), les l et une liste d'elements entre {} les r
+    // r est un bloc d'instruction
+	let rec dot = function
+	 While (l,r) -> Dot.N ("While",[dot l; dot r])
+
+
+arithlex.mll
+	| "while"               { WHILE }
+
+
+arithpar.mly
+	%token EOF
+	WHILE
+
+	start2:
+	|whiles             {$1}
+
+	assign:
+	| w=whiles          {w}
+
+    // Le while est composé d'une expressions entre () et d'une listes d'expressions
+    // Il faut peut être remplacer OPEN_CURLY_BRACKET s=expr CLOSE_CURLY_BRACKET par un bloc (définit precedement) ?...
+	whiles:
+	| WHILE OPEN_BRACKET r=expr CLOSE_BRACKET OPEN_CURLY_BRACKET s=expr CLOSE_CURLY_BRACKET { While(r,s) }

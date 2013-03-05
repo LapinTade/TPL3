@@ -1,0 +1,46 @@
+MARTIN Jordy
+ROZE Nicolas
+TP1A
+
+		Analyse syntaxique
+
+
+4/		L'opérateur * est prioritaire sur le +. C'est à dire qu'il faut le 
+	traiter	lui et ses opérend en premier. Ainsi 4 + 2 * 5, on doit effectuer
+	l'opération 2 * 5 en premier et ensuite ajouter 4.
+		D'apres les résultats des expérimentations nous pouvons constater que la 
+	précédence est respectée.
+
+5/		L'associativité des opérateur + et * est de droite à gauche (LR, Left
+	to Right), c'est à dire que dans une opération on traite en premier les
+	éléments de gauche puis les éléments de droites: quand une opérende possède
+	un operateur sur sa gauche et sa droite, p, effectue l'opération de gauche.
+	Ainsi 5 + 9 + 2 équivaut à (5 + 9) + 2 [Les parenthèses sont prioritaires 
+	sur le reste].
+		L'associativité est géré par le Parseur à l'aide des instructions
+	"left PLUS
+	%left TIMES" <= Ici l'opérateur + et l'opérateur * sont associatifs à
+	gauches (left).
+
+6/		Sans l'instruction left sur les opérateurs la priorité n'est plus
+	respectée. + et * ont la même priorité. 2 * 3 + 4 donne (2 * (3 + 4))
+
+7/		Sans l'instruction left, l'associativité est à droite. Ainsi 4 + 5 + 6
+	donne: (4 + (5 + 6))
+
+8/		int_plus_left:
+		| i=INT { Int i }
+		| l=int_plus_left PLUS r=INT { Bin (Plus, l, Int(r))}
+
+9/		int_plus_right:
+		| i=INT { Int i }
+		| l=INT PLUS r=int_plus_right { Bin (Plus, Int(l), r)}
+
+10/		Oui il existe une relation entre propriété de production et
+	associativité car la modification de l'associativité peut donner un arbre
+	completement différent, donc des propriétés opératoires différentes.
+		Ces proritées sont importante pour des opérateurs tel que *. Car les
+	opérendes peuvent changer et donc changer le résultat de l'opération.
+		Il faut se demander si le parseur va retranscrire de manière correctes 
+	les opérations car il risque d'inverser les opérations (données lues dans un
+	ordre différent).

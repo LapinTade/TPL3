@@ -9,23 +9,23 @@ open ArithAST
 
 %token EOF
   PLUS TIMES MINUS DIVIDE
-  NEQ EQ LEQ GEQ LT GT
-  AND OR NOT FALSE TRUE
-  OPENCRO CLOSECRO
-  OPENPAR CLOSEPAR ASSIGN PV
-  ACOPEN ACOFER WHILE
-  PP MM PE ME FOR
+  NEQ EQ LEQ GEQ LT GT WHILE FOR DO PE MM ME PP IF ELSE DP PIN 
+  AND OR NOT CLOSEPAR OPENPAR OPENCRO CLOSECRO ASSIGN  PV ACOPEN ACOFER
 %token<int> INT
 %token<float> FLOAT
 %token<string> STRING VAR
+%token TRUE FALSE 
 
+%left PIN
 %left AND OR
 %left EQ NEQ
 %left LT GT LEQ GEQ
 %left PLUS MINUS
-%left TIMES DIVIDE
+%left TIMES DIVIDE 
 %nonassoc UMINUS /* virtual token */
 %nonassoc NOT
+(**%nonassoc OPENPAR CLOSEPAR **)
+
 
 %start <ArithAST.t> start start1
 
@@ -37,42 +37,11 @@ int_plus_left int_plus_right manual_arith_plus_r manual_arith_plus_l EOF
 start: start2 EOF { $1 } /* YACC-style indexing $1, $2, etc */
 
 start2:
-|stmts {$1}
-|assign {$1}
-|expr {$1}
-|tab {$1}
-
-stmts:
-| l=stmts_inner { Stmts l }
-
-stmts_inner:
-| { [] }
-| s=stmt PV r=stmts_inner { s::r }
-
-stmt:
-| a=assign 	{ a }
-| b=bloc 	{ b }
-| w=whiles 	{ w }
-| f=fors 	{ f }
-
-assign:
-| a=assignable ASSIGN r=expr { Assign(a,r) }
-| a=assignable ASSIGN r=expr { Assign(a,r) }
-| v=VAR PP { Assign(Var v,Bin (Plus,Var v, Int 1)) }
-| v=VAR MM { Assign(Var v,Bin (Minus,Var v, Int 1)) }
-| v=VAR PE r=expr { Assign(Var v,Bin (Plus,Var v, r)) }
-| v=VAR ME r=expr { Assign(Var v,Bin (Minus,Var v, r)) }
-
-assignable:
-| v=VAR 		{ Var v }
-| t=tab			{t}
-
-bloc:
-| ACOPEN s=stmts ACOFER {s}
+| expr { $1 }
+| stmt { $1 }
+| terminated_stmt { $1 }
 
 expr:
-| t=TRUE		{ True } 
-| f=FALSE		{ False }
 | i=INT                 { Int i }
 | f=FLOAT               { Float f }
 | s=STRING              { String s }
@@ -84,20 +53,51 @@ expr:
 | e=bin_expr            { e }
 | MINUS t=expr          { Un (UMinus,t) }       %prec UMINUS
 | NOT   t=expr          { Un (Not,t) }
-| OPENPAR t=expr CLOSEPAR {t}
+| id=VAR OPENCRO t=expr CLOSECRO	{ Index (id,t) }
+| OPENPAR t=expr CLOSEPAR		{ Parent (t) }
+| t=expr PIN e=expr DP r=expr    { Tern(t,e,r)}
 
-tab:
-| v=VAR OPENCRO t=expr CLOSECRO { Index(v,t) }
+stmts_inner:(*epsilon*){ [] } | s=stmt PV ss=stmts_inner { s::ss }
+
+stmts: l=stmts_inner { Stmts l }
+
+bloc:
+| ACOPEN s=stmts ACOFER     { s }
+
+terminated_stmt: 
+| b=bloc                                    { b }
+| s=stmt PV 								{ s }
+| i=ifelse	                                { i }
+| w=whiles 	                                { w }
+| f=fors 	                                { f }
+| ACOPEN s=stmts ACOFER							{ s }
+(*| DO t=terminated_stmt WHILE b=bin PV 				{ Do(t,b) }*)
+
+
+ifelse:
+| IF e=expr t=terminated_stmt ELSE td=terminated_stmt { IfElse(e,t,td) } 
+| IF e=expr t=terminated_stmt { If(e,t) } 
 
 whiles:
-| WHILE OPENPAR r=expr CLOSEPAR ACOPEN s=stmts ACOFER { While(r,s) }
-| WHILE r=expr ACOPEN s=stmts ACOFER { While(r,s) }
-| WHILE r=expr s=stmts { While(r,s) }
-| WHILE OPENPAR r=expr CLOSEPAR s=stmts { While(r,s) }
+| WHILE r=expr t=terminated_stmt { While(r,t) }
 
 fors:
-| FOR OPENPAR a=assign PV e=expr PV s=stmt CLOSEPAR b=bloc { For(a,e,s,b) }
-| FOR OPENPAR a=assign PV e=expr PV s=stmt CLOSEPAR s1=stmt { For(a,e,s,s1) }
+| FOR OPENPAR u=stmt PV e=expr PV u1=stmt CLOSEPAR t1=terminated_stmt { For(u,e,u1,t1) }
+
+dowhile:
+| DO t=terminated_stmt WHILE e=expr { Do(t,e) }
+
+assignable:
+|v=VAR { Var v }
+|id=VAR OPENCRO t=expr CLOSECRO	{ Index (id,t) } 
+
+stmt:
+| d=dowhile 			            { d }
+| id=assignable ASSIGN	t=expr 		{  Assign (id,t)}
+| id=assignable PP	 		{ Assign (id,Bin (Plus, id,Int 1))}
+| id=assignable PE	t=expr 	{ Assign (id,Bin (Plus, id, t))}
+| id=assignable ME  t=expr 	{ Assign (id,Bin (Minus, id,  t))}
+| id=assignable MM		 	{ Assign (id,Bin (Minus, id, Int 1))}
 
 
 /* %inline is Menhir-specific, though other tools might have equivalent
@@ -109,6 +109,10 @@ fors:
  * Of course, you could just repeat the "l=expr OP r=expr" pattern ad-nauseam...
  * Exercice: factor the artihmetic operators in the binop rule.
  */
+bin: 
+|b=bin_expr			{b}
+|OPENPAR b=bin_expr CLOSEPAR		{b}
+
 
 %inline bin_expr: l=expr o=binop r=expr { Bin (o, l, r) }
 %inline binop:

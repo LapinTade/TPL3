@@ -1,137 +1,76 @@
-Lookahead token is now FOR (178-181)
+Lookahead token is now IF (253-255)
 State 0:
-Shifting (FOR) to state 52
-State 52:
-Lookahead token is now OPENPAR (182-183)
-Shifting (OPENPAR) to state 53
-State 53:
-Lookahead token is now VAR (183-184)
-Shifting (VAR) to state 42
-State 42:
-Lookahead token is now ASSIGN (184-185)
-Reducing production assignable -> VAR 
-State 55:
-Shifting (ASSIGN) to state 56
-State 56:
-Lookahead token is now INT (185-186)
-Shifting (INT) to state 9
-State 9:
-Lookahead token is now PV (186-187)
-Reducing production expr -> INT 
-State 57:
-Reducing production assign -> assignable ASSIGN expr 
-State 58:
-Shifting (PV) to state 59
-State 59:
-Lookahead token is now VAR (187-188)
+Shifting (IF) to state 49
+State 49:
+Lookahead token is now VAR (256-258)
 Shifting (VAR) to state 2
 State 2:
-Lookahead token is now GT (188-189)
+Lookahead token is now IF (259-261)
 Reducing production expr -> VAR 
-State 60:
-Shifting (GT) to state 31
-State 31:
-Lookahead token is now INT (189-190)
-Shifting (INT) to state 9
-State 9:
-Lookahead token is now PV (190-191)
-Reducing production expr -> INT 
-State 32:
-Reducing production expr -> expr GT expr 
-State 60:
-Shifting (PV) to state 61
-State 61:
-Lookahead token is now VAR (191-192)
-Shifting (VAR) to state 42
-State 42:
-Lookahead token is now PP (192-194)
-Shifting (PP) to state 43
-State 43:
-Lookahead token is now CLOSEPAR (194-195)
-Reducing production assign -> VAR PP 
-State 72:
-Reducing production stmt -> assign 
-State 73:
-Shifting (CLOSEPAR) to state 74
-State 74:
-Lookahead token is now ACOPEN (196-197)
-Shifting (ACOPEN) to state 62
+State 50:
+Shifting (IF) to state 49
+State 49:
+Lookahead token is now VAR (262-264)
+Shifting (VAR) to state 2
+State 2:
+Lookahead token is now VAR (265-266)
+Reducing production expr -> VAR 
+State 50:
+Shifting (VAR) to state 45
+State 45:
+Lookahead token is now ASSIGN (266-267)
+Reducing production assignable -> VAR 
 State 62:
-Lookahead token is now VAR (197-202)
-Shifting (VAR) to state 42
-State 42:
-Lookahead token is now ASSIGN (202-203)
-Reducing production assignable -> VAR 
-State 55:
-Shifting (ASSIGN) to state 56
-State 56:
-Lookahead token is now VAR (203-204)
-Shifting (VAR) to state 2
-State 2:
-Lookahead token is now PV (204-205)
-Reducing production expr -> VAR 
-State 57:
-Reducing production assign -> assignable ASSIGN expr 
-State 72:
-Reducing production stmt -> assign 
-State 67:
-Shifting (PV) to state 68
-State 68:
-Lookahead token is now VAR (206-209)
-Shifting (VAR) to state 42
-State 42:
-Lookahead token is now OPENCRO (209-210)
-Shifting (OPENCRO) to state 46
-State 46:
-Lookahead token is now VAR (210-211)
-Shifting (VAR) to state 2
-State 2:
-Lookahead token is now CLOSECRO (211-212)
-Reducing production expr -> VAR 
-State 47:
-Shifting (CLOSECRO) to state 48
-State 48:
-Lookahead token is now ASSIGN (212-213)
-Reducing production tab -> VAR OPENCRO expr CLOSECRO 
-State 54:
-Reducing production assignable -> tab 
-State 55:
-Shifting (ASSIGN) to state 56
-State 56:
-Lookahead token is now VAR (213-214)
-Shifting (VAR) to state 2
-State 2:
-Lookahead token is now PV (214-215)
-Reducing production expr -> VAR 
-State 57:
-Reducing production assign -> assignable ASSIGN expr 
-State 72:
-Reducing production stmt -> assign 
-State 67:
-Shifting (PV) to state 68
-State 68:
-Lookahead token is now ACOFER (215-216)
-Reducing production stmts_inner -> 
+Shifting (ASSIGN) to state 69
 State 69:
-Reducing production stmts_inner -> stmt PV stmts_inner 
-State 69:
-Reducing production stmts_inner -> stmt PV stmts_inner 
-State 64:
-Reducing production stmts -> stmts_inner 
-State 65:
-Shifting (ACOFER) to state 66
-State 66:
-Lookahead token is now EOF (217-217)
-Reducing production bloc -> ACOPEN stmts ACOFER 
-State 76:
-Reducing production stmt -> bloc 
-State 75:
-Reducing production fors -> FOR OPENPAR assign PV expr PV stmt CLOSEPAR stmt 
+Lookahead token is now INT (267-268)
+Shifting (INT) to state 8
+State 8:
+Lookahead token is now PV (268-269)
+Reducing production expr -> INT 
 State 70:
-Reducing production stmt -> fors 
-State 67:
-Initiating error handling
-Fatal error: exception Failure("<parsing error>")
-Raised at file "pervasives.ml", line 22, characters 22-33
-Called from file "arith.ml", line 10, characters 12-21
-Called from file "arith.ml", line 17, characters 2-18
+Reducing production stmt -> assignable ASSIGN expr 
+State 75:
+Shifting (PV) to state 76
+State 76:
+Lookahead token is now ELSE (270-274)
+Reducing production terminated_stmt -> stmt PV 
+State 87:
+Shifting (ELSE) to state 88
+State 88:
+Lookahead token is now VAR (275-276)
+Shifting (VAR) to state 45
+State 45:
+Lookahead token is now ASSIGN (276-277)
+Reducing production assignable -> VAR 
+State 62:
+Shifting (ASSIGN) to state 69
+State 69:
+Lookahead token is now INT (277-278)
+Shifting (INT) to state 8
+State 8:
+Lookahead token is now PV (278-279)
+Reducing production expr -> INT 
+State 70:
+Reducing production stmt -> assignable ASSIGN expr 
+State 75:
+Shifting (PV) to state 76
+State 76:
+Lookahead token is now EOF (281-281)
+Reducing production terminated_stmt -> stmt PV 
+State 89:
+Reducing production ifelse -> IF expr terminated_stmt ELSE terminated_stmt 
+State 77:
+Reducing production terminated_stmt -> ifelse 
+State 87:
+Reducing production ifelse -> IF expr terminated_stmt 
+State 77:
+Reducing production terminated_stmt -> ifelse 
+State 95:
+Reducing production start2 -> terminated_stmt 
+State 97:
+Shifting (EOF) to state 98
+State 98:
+Reducing production start -> start2 EOF 
+State 99:
+Accepting

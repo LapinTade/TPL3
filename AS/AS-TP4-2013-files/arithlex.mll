@@ -35,7 +35,7 @@ rule token = parse
 | ">"                   { GT }
 | "&&"                  { AND }
 | "||"                  { OR }
-| "~"                   { NOT }
+| "!"                   { NOT }
 | "["                   { OPENCRO }
 | "]"                   { CLOSECRO }
 | "("                   { OPENPAR }
@@ -48,12 +48,19 @@ rule token = parse
 | "--"                  { MM }
 | "+="                  { PE }
 | "-="                  { ME }
+| ":"                   { DP }
+| "?"                   { PIN }
 
-| "while"               { WHILE }
-| "for"			{ FOR }
+| "while"		        { WHILE }
+| "for"			        { FOR }
+| "do"			        { DO }
+| "if"                  { IF }
+| "else"                { ELSE }
 
 |"true"            	{ TRUE }
 |"false"        	{ FALSE }
+
+
 | decimal as i          { INT (ios i) }
 | hexa as h             { INT (ios h) }
 | float as f            { FLOAT (fos f) }

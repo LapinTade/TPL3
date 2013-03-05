@@ -9,6 +9,7 @@ type token =
   | PV
   | PP
   | PLUS
+  | PIN
   | PE
   | OR
   | OPENPAR
@@ -21,6 +22,7 @@ type token =
   | LT
   | LEQ
   | INT of (int)
+  | IF
   | GT
   | GEQ
   | FOR
@@ -28,6 +30,9 @@ type token =
   | FALSE
   | EQ
   | EOF
+  | ELSE
+  | DP
+  | DO
   | DIVIDE
   | CLOSEPAR
   | CLOSECRO
